@@ -8,7 +8,7 @@
 #include "camera.h"
 
 using uint = unsigned int;
-
+//test comment
 int main()
 {
 	if(glfwInit() == false)
