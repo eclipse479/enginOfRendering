@@ -172,7 +172,7 @@ int main()
 	//link both programs
 	glLinkProgram(shaderProgramID);
 	success = GL_FALSE;
-	glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &success);
+	glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &success);
 	if (!success)
 	{
 		//get length of open GL error message

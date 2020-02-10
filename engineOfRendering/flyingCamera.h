@@ -1,5 +1,7 @@
 #pragma once
 #include "camera.h"
+
+#ifndef FLY_CAMERA_H
 class flyingCamera :	public camera
 {
 public:
@@ -12,3 +14,4 @@ private:
 	float angularSpeed = 0.1f;
 };
 
+#endif // !FLY_CAMERA_H
