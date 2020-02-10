@@ -41,10 +41,10 @@ int main()
 	//mesh data
 	glm::vec3 Vertecies[] =
 	{
-		glm::vec3(-0.5f, 0.5f, 0.0),		  // 0
-		glm::vec3(0.5f, 0.5f, 0.0),			  // 1
-		glm::vec3(-0.5f, -0.5f, 0.0),		 // 2
-		glm::vec3(0.5f, -0.5f, 0.0),		 // 3 
+		glm::vec3(-0.5f, 0.5f, 0.5),		  // 0
+		glm::vec3(0.5f, 0.5f, 0.5),			  // 1
+		glm::vec3(-0.5f, -0.5f, 0.5),		 // 2
+		glm::vec3(0.5f, -0.5f, 0.5),		 // 3 
 		glm::vec3(-0.5f, 0.5f, -0.5),    // 4
 		glm::vec3(0.5f, 0.5f, -0.5),     // 5
 		glm::vec3(-0.5f, -0.5f, -0.5),  // 6

@@ -38,7 +38,7 @@ const glm::mat4& camera::getProjection()
 }
 const glm::mat4& camera::getView()
 {
-	return this->view;
+	return this->viewTransform;
 }
 const glm::mat4& camera::getWorldTransform()
 {
@@ -57,18 +57,20 @@ void camera::setPerspective(float FOV, float aspectRatio, float close, float dis
 }
 void camera::setLookAt(glm::vec3 from, glm::vec3 to, glm::vec3 up)
 {
-	this->view = glm::lookAt(from, to, up);
-	this->worldTransform = glm::inverse(view);
+	this->viewTransform = glm::lookAt(from, to, up);
+	this->worldTransform = glm::inverse(viewTransform);
 	updateProjectionViewTransform();
 }
 void camera::setPosition(glm::vec3 newPosition)
 {
 	this->worldTransform[3] = glm::vec4(newPosition,1);
-	this->view = glm::inverse(worldTransform);
+	this->viewTransform = glm::inverse(worldTransform);
 	updateProjectionViewTransform();
 }
 void camera::updateProjectionViewTransform()
 {
-	view = glm::inverse(worldTransform);
-	this->projectionView = this->projection * this->view;
+	//view transform is == inverse of world transform
+	viewTransform = glm::inverse(worldTransform);
+	//update the projection view
+	this->projectionView = this->projection * this->viewTransform;
 }

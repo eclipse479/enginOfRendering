@@ -9,7 +9,7 @@ public:
 	void setSpeed(float newSpeed);
 private:
 
-	float speed = 1.0f;
+	float speed = 10.0f;
 
 	float angularSpeed = 0.1f;
 };

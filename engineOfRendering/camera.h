@@ -24,11 +24,11 @@ public:
 protected:
 	glm::mat4 worldTransform = glm::mat4(0.0f);
 	//		Perspective(FieldOfView, ScreenAspectRatio, nearPoint, farPoint)
-	glm::mat4 projection;// = glm::perspective(90.0f, 16 / 9.0f, 0.1f, 50.0f);
+	glm::mat4 projection;
 	//		lookAt(cameraPos, thingToLookAt, directionOfUp)
-	glm::mat4 view;// = glm::lookAt(glm::vec3(0, 0, 1), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
-	glm::mat4 projectionView = projection * view;
-
+	glm::mat4 viewTransform;
+	glm::mat4 projectionView = projection * viewTransform;
+	
 	void updateProjectionViewTransform();
 	bool mouseCatch = false;
 	int timer = 10;
