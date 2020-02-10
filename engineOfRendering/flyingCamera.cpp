@@ -2,7 +2,7 @@
 
 void flyingCamera::setSpeed(float newSpeed)
 {
-	speed = newSpeed;
+	this->speed = newSpeed;
 }
 
 void flyingCamera::update(float deltaTime)
@@ -11,8 +11,6 @@ void flyingCamera::update(float deltaTime)
 	auto glfw_window = glfwGetCurrentContext();
 	//build transformation vector
 	glm::vec4 displacement = glm::vec4(0.0f,0.0f,0.0f,0.0f);
-
-	speed = 3 * deltaTime;
 
 		//moves the camera in the opposite direction the camera is facing
 		displacement.y -= glfwGetKey(glfw_window, GLFW_KEY_UP);
@@ -23,7 +21,7 @@ void flyingCamera::update(float deltaTime)
 		//moves the camera perpandicular to both the direction the camera is facing and the Up vector
 		displacement.x -= glfwGetKey(glfw_window, GLFW_KEY_LEFT);
 	//set camera position
-	    this->worldTransform[3] - (displacement * speed);
+	    this->worldTransform[3] -= (displacement * speed * deltaTime);
 
-	updateProjectionViewTransform();
+	    //updateProjectionViewTransform();
 }
