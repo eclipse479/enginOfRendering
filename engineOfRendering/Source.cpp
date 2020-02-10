@@ -57,7 +57,7 @@ int main()
 			///		Perspective(FieldOfView, ScreenAspectRatio, nearPoint, farPoint)
 	
 	///		lookAt(cameraPos, thingToLookAt, directionOfUp)
-	glm::mat4 model = glm::mat4(0.0f);
+	glm::mat4 model = glm::mat4(1.0f);
 
 	/*send info to the GPU-------------------*/
 	uint VAO;
