@@ -1,19 +1,18 @@
 #include "camera.h"
+
+
+
 camera::camera()
 {
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-
-	currentFrame = 0;
-	lastFrame = 0;
-	deltaTime = 0;
+	this->setPerspective(90.0f * 3.141f / 180.0f, 16.0f / 9.0f, 0.1f, 50.0f);
+	this->setLookAt(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-camera::~camera()
+camera::camera(float FOV, float aspectRatio, float close, float distant)
 {
-
+	this->setPerspective(FOV, aspectRatio, close, distant);
 }
+
 void camera::update(GLFWwindow* window)
 {
 	// hide/reveal mouse
@@ -29,80 +28,46 @@ void camera::update(GLFWwindow* window)
 		mouseCatch = false;
 		timer = 10;
 	}
-	timer--;
-
-	//move camera
-	cameraSpeed = 3 * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-	{
-		cameraPos -= cameraSpeed * cameraFront;
-	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-	{
-		cameraPos += cameraSpeed * cameraFront;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-	{
-		cameraPos += glm::normalize(glm::cross(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f))) * cameraSpeed;
-	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-	{
-		cameraPos -= glm::normalize(glm::cross(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f))) * cameraSpeed;
-	}
-	//set camera position
-	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-//glfwSetCursorPosCallback(window,  captureMousePos);
+	if(timer > -1)
+	timer--;	
 }
 
-glm::mat4 camera::returnProjection()
+const glm::mat4& camera::getProjection()
 {
-	return projection;
+	return this->projection;
 }
-glm::mat4 camera::returnView()
+const glm::mat4& camera::getView()
 {
-	return view;
+	return this->view;
 }
-glm::mat4 camera::returnModel()
+const glm::mat4& camera::getWorldTransform()
 {
-	return model;
+	return this->worldTransform;
 }
-
-void camera::findDeltaTime()
+const glm::mat4& camera::getProjectionView()
 {
-	currentFrame = glfwGetTime();
-	deltaTime = currentFrame - lastFrame;
-	lastFrame = currentFrame;
+	return this->projectionView;
 }
 
-void camera::captureMousePos(GLFWwindow* window, double mouseX, double mouseY)
+
+void camera::setPerspective(float FOV, float aspectRatio, float close, float distant)
 {
-	if (firstFrame)
-	{
-		lastX = mouseX;
-		lastY = mouseY;
-		firstFrame = false;
-	}
-
-	float xOffset = mouseX - lastX;
-	float yOffset = mouseY - lastY;
-	lastX = mouseX;
-	lastY = mouseY;
-
-	const float sensitivity = 0.05f;
-	xOffset *= sensitivity;
-	yOffset *= sensitivity;
-
-	yaw += xOffset;
-	pitch += yOffset;
-
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	else if (pitch < -89.0f)
-		pitch = -89.0f;
-
-
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(direction);
+	projection = glm::perspective(FOV, aspectRatio, close, distant);
+	updateProjectionViewTransform();
+}
+void camera::setLookAt(glm::vec3 from, glm::vec3 to, glm::vec3 up)
+{
+	view = glm::lookAt(from, to, up);
+	worldTransform = glm::inverse(view);
+	updateProjectionViewTransform();
+}
+void camera::setPosition(glm::vec3 newPosition)
+{
+	worldTransform[3] = glm::vec4(newPosition,1);
+	view = glm::inverse(worldTransform);
+	updateProjectionViewTransform();
+}
+void camera::updateProjectionViewTransform()
+{
+	projectionView = projection * view;
 }

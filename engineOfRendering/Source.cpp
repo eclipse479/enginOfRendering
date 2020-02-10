@@ -6,9 +6,10 @@
 #include "sstream"
 
 #include "camera.h"
+#include "flyingCamera.h"
 
 using uint = unsigned int;
-//test comment
+
 int main()
 {
 	if(glfwInit() == false)
@@ -16,7 +17,8 @@ int main()
 
 	GLFWwindow* window = glfwCreateWindow(1280, 720, "Computer Graphics", nullptr, nullptr);
 
-	camera theCamera;
+	flyingCamera theFlyingCamera;
+	//camera theCamera;
 	if (window == nullptr)
 	{
 		glfwTerminate();
@@ -49,15 +51,13 @@ int main()
 		glm::vec3(0.5f, -0.5f, -0.5)    // 7
 	};
 	//int numberOfVerts = 6;
-	int indexBuffer[]{ 0,1,2,1,3,2,4,5,6,5,7,6,0,2,4,4,2,6 };
+	int indexBuffer[]{ 0,1,2,1,3,2,4,6,5,5,6,7,0,2,4,4,2,6,1,5,3,5,7,3 };
 	///create and load MESH
 
 			///		Perspective(FieldOfView, ScreenAspectRatio, nearPoint, farPoint)
 	
 	///		lookAt(cameraPos, thingToLookAt, directionOfUp)
-	glm::mat4 projection = theCamera.returnProjection();
-	glm::mat4 view = theCamera.returnView();
-	glm::mat4 model = theCamera.returnModel();
+	glm::mat4 model = glm::mat4(0.0f);
 
 	/*send info to the GPU-------------------*/
 	uint VAO;
@@ -72,7 +72,7 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(glm::vec3), Vertecies, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 18 * sizeof(int), indexBuffer, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 24 * sizeof(int), indexBuffer, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
@@ -197,8 +197,17 @@ int main()
 	float sinNumber = 0;
 	float cosNumber = 0;
 	float number = 0;
+
+	float currentFrame = 0;
+	float lastFrame = 0;
+	float deltaTime = 0;
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
+
+		//manually creates delta time
+		currentFrame = float(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 		if (glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
 		{
 			glClearColor(0.5, 1.0, 1.0, 1.0);
@@ -220,27 +229,20 @@ int main()
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 
-		    theCamera.findDeltaTime();
-			theCamera.update(window);
-
-			projection = theCamera.returnProjection();
-			view = theCamera.returnView();
-		// our game logic and update code goes here!
-		// so does our render code!
-	   glm::mat4 pvm = projection * view * model;
+		theFlyingCamera.update(deltaTime);
+	   
 	   static int frameCount = 0;
 	   //view = glm::lookAt(glm::vec3(1.507f, 0, 1), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-
 	   frameCount++;
 
+
 	   glUseProgram(shaderProgramID);
-	   
+	   //rotates the object
 	   model = glm::rotate(model, 0.016f, glm::vec3(1, 0, 0));
-	  glm::mat4 pv = projection * view;
+
+	  //for colour changing properties
 	  sinNumber = sin(number);
 	  cosNumber = cos(number);
-
-
 	  if (sinNumber < 0)
 	  {
 		  sinNumber = -sinNumber;
@@ -251,24 +253,20 @@ int main()
 	  }
 	   glm::vec4 color = glm::vec4(sinNumber, cosNumber, sin(number),1.0f);
 	   number += 0.03f;
+	   //----------END COLOUR CHANGING PROPERTIES-------------------------
 	   auto uniformLocation = glGetUniformLocation(shaderProgramID, "projection_view_matrix");
-	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(pv));
+	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(theFlyingCamera.getProjectionView()));
 
 	   uniformLocation = glGetUniformLocation(shaderProgramID, "model_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
 
+	   //sets the colour for the polygons drawn
 	   uniformLocation = glGetUniformLocation(shaderProgramID, "color");
 	   glUniform4fv(uniformLocation, 1, glm::value_ptr(color));
 
 	   glBindVertexArray(VAO);
 	   //glDrawArrays(GL_TRIANGLES, 0, 4);
-	   glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT,0);
-
-
-	   
-	   
-	   
-	   
+	   glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT,0);
 	   
 	   glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -276,6 +274,7 @@ int main()
 
 	glDeleteBuffers(1,&VAO);
 	glDeleteBuffers(1, &VBO);
+	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
 }
