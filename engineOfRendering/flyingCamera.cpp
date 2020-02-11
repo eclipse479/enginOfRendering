@@ -7,10 +7,12 @@ void flyingCamera::setSpeed(float newSpeed)
 
 void flyingCamera::update(float deltaTime)
 {
+
 	// Grab context
 	auto glfw_window = glfwGetCurrentContext();
 	//build transformation vector
 	glm::vec4 displacement = glm::vec4(0.0f,0.0f,0.0f,0.0f);
+
 
 		//moves the camera in the opposite direction the camera is facing
 		displacement.y += glfwGetKey(glfw_window, GLFW_KEY_UP);
@@ -32,6 +34,21 @@ void flyingCamera::update(float deltaTime)
 			updateProjectionViewTransform();
 		}
 
+		
+		if (glfwGetKey(glfw_window, GLFW_KEY_M) == GLFW_PRESS && !mouseCatch && timer < 0)
+		{
+			glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			mouseCatch = true;
+			timer = 10;
+		}
+		else if (glfwGetKey(glfw_window, GLFW_KEY_M) == GLFW_PRESS && mouseCatch && timer < 0)
+		{
+			glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			mouseCatch = false;
+			timer = 10;
+		}
+		if (timer > -1)
+			timer--;
 		/* MOUSE LOOK */
 		double cursor_position_x;
 		double cursor_position_y;

@@ -11,7 +11,7 @@ private:
 
 	float speed = 10.0f;
 
-	float angularSpeed = 0.1f;
+	float angularSpeed = 0.01f;
 };
 
 #endif // !FLY_CAMERA_H

@@ -13,23 +13,8 @@ camera::camera(float FOV, float aspectRatio, float close, float distant)
 	this->setPerspective(FOV, aspectRatio, close, distant);
 }
 
-void camera::update(GLFWwindow* window)
+void camera::update()
 {
-	//// hide/reveal mouse
-	//if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS && !mouseCatch && timer < 0)
-	//{
-	//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	//	mouseCatch = true;
-	//	timer = 10;
-	//}
-	//else if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS && mouseCatch && timer < 0)
-	//{
-	//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	//	mouseCatch = false;
-	//	timer = 10;
-	//}
-	//if(timer > -1)
-	//timer--;	
 }
 
 const glm::mat4& camera::getProjection()

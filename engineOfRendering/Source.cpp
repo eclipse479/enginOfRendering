@@ -50,8 +50,20 @@ int main()
 		glm::vec3(-0.5f, -0.5f, -0.5),  // 6
 		glm::vec3(0.5f, -0.5f, -0.5)    // 7
 	};
-	//int numberOfVerts = 6;
-	int indexBuffer[]{ 0,1,2,1,3,2,4,6,5,5,6,7,0,2,4,4,2,6,1,5,3,5,7,3 };
+	int numberOfVerts = 36;
+	int indexBuffer[]{ 0,1,2,
+		1,3,2,
+		4,6,5,
+		5,6,7,
+		0,2,4,
+		4,2,6,
+		1,5,3,
+		5,7,3,
+		0,4,1,
+		4,5,1,
+		2,3,6,
+		3,7,6
+	};
 	///create and load MESH
 
 			///		Perspective(FieldOfView, ScreenAspectRatio, nearPoint, farPoint)
@@ -72,7 +84,7 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(glm::vec3), Vertecies, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 24 * sizeof(int), indexBuffer, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numberOfVerts * sizeof(int), indexBuffer, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
@@ -201,9 +213,10 @@ int main()
 	float currentFrame = 0;
 	float lastFrame = 0;
 	float deltaTime = 0;
+	glfwSetCursorPos(window, 1280 * 0.5, 720 * 0.5);
+
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
-
 		//manually creates delta time
 		currentFrame = float(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
@@ -231,9 +244,8 @@ int main()
 
 		theFlyingCamera.update(deltaTime);
 	   
-	   static int frameCount = 0;
+	  
 	   //view = glm::lookAt(glm::vec3(1.507f, 0, 1), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-	   frameCount++;
 
 
 	   glUseProgram(shaderProgramID);
@@ -251,7 +263,7 @@ int main()
 	  {
 		  cosNumber = -cosNumber;
 	  }
-	   glm::vec4 color = glm::vec4(sinNumber, cosNumber, sin(number),1.0f);
+	   glm::vec4 color = glm::vec4(sinNumber, cosNumber, sin(cosNumber),1.0f);
 	   number += 0.03f;
 	   //----------END COLOUR CHANGING PROPERTIES-------------------------
 	   auto uniformLocation = glGetUniformLocation(shaderProgramID, "projection_view_matrix");
@@ -266,7 +278,7 @@ int main()
 
 	   glBindVertexArray(VAO);
 	   //glDrawArrays(GL_TRIANGLES, 0, 4);
-	   glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT,0);
+	   glDrawElements(GL_TRIANGLES, numberOfVerts, GL_UNSIGNED_INT,0);
 	   
 	   glfwSwapBuffers(window);
 		glfwPollEvents();

@@ -11,7 +11,7 @@ public:
 
 	camera(float FOV, float aspectRatio, float close, float distant);
 
-	virtual void update(GLFWwindow* window);
+	virtual void update();
 	void setPerspective(float FOV, float aspectRatio, float close, float distant);
 	void setLookAt(glm::vec3 from, glm::vec3 to, glm::vec3 up);
 	void setPosition(glm::vec3 newPosition);
@@ -30,7 +30,7 @@ protected:
 	glm::mat4 projectionView = projection * viewTransform;
 	
 	void updateProjectionViewTransform();
-	bool mouseCatch = false;
+	bool mouseCatch = true;
 	int timer = 10;
 };
 
