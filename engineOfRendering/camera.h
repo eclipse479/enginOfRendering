@@ -32,6 +32,10 @@ protected:
 	void updateProjectionViewTransform();
 	bool mouseCatch = true;
 	int timer = 10;
+	glm::vec3 position = worldTransform[3];
+	glm::vec3 cameraDirection = glm::normalize(position);
+	glm::vec3 cameraRight = glm::normalize(glm::cross(glm::vec3(0.0f,1.0f,0.0f), cameraDirection));
+	glm::vec3 cameraUp = cross(cameraDirection, cameraRight);
 };
 
 #endif // !CAMERA_H

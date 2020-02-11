@@ -217,6 +217,7 @@ int main()
 
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//manually creates delta time
 		currentFrame = float(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
