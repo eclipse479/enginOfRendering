@@ -13,42 +13,30 @@ void flyingCamera::update(float deltaTime)
 	//build transformation vector
 	glm::vec4 displacement = glm::vec4(0.0f,0.0f,0.0f,0.0f);
 
-
-		//moves the camera in the opposite direction the camera is facing
-		displacement.y += glfwGetKey(glfw_window, GLFW_KEY_UP);
+		//LEFT
+		displacement.x -= glfwGetKey(glfw_window, GLFW_KEY_A);
+		//RIGHT
+		displacement.x += glfwGetKey(glfw_window, GLFW_KEY_D);
+		//FORWARDS
+		displacement.z += glfwGetKey(glfw_window, GLFW_KEY_W);
+		//BACKWARDS
+		displacement.z -= glfwGetKey(glfw_window, GLFW_KEY_S);
+		//DOWN
+		displacement.y += glfwGetKey(glfw_window, GLFW_KEY_Q);
+		//UP
+		displacement.y -= glfwGetKey(glfw_window, GLFW_KEY_E);
 		//moves the camera in the direction the camera is facing
-		displacement.y -= glfwGetKey(glfw_window, GLFW_KEY_DOWN);
-		//moves the camera perpandicular to both the direction the camera is facing and the Up vector
-		displacement.x += glfwGetKey(glfw_window, GLFW_KEY_RIGHT);
-		//moves the camera perpandicular to both the direction the camera is facing and the Up vector
-		displacement.x -= glfwGetKey(glfw_window, GLFW_KEY_LEFT);
-		//moves the camera perpandicular to both the direction the camera is facing and the Up vector
-		displacement.z += glfwGetKey(glfw_window, GLFW_KEY_O);
-		//moves the camera perpandicular to both the direction the camera is facing and the Up vector
-		displacement.z -= glfwGetKey(glfw_window, GLFW_KEY_P);
-	//set camera position
-	    this->worldTransform[3] -= (displacement * speed * deltaTime);
+		
+		glm::vec4 moveDirection = -displacement.z * worldTransform[2] + displacement.x * worldTransform[0] + displacement.y * worldTransform[1];
+		glm::normalize(moveDirection);
+
+	    this->worldTransform[3] += (moveDirection * speed * deltaTime);
 		//only update view transform if directional input has been recieved
 		if (displacement != glm::vec4(0.0f)) 
 		{
 			updateProjectionViewTransform();
 		}
 
-		
-		if (glfwGetKey(glfw_window, GLFW_KEY_M) == GLFW_PRESS && !mouseCatch && timer < 0)
-		{
-			glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-			mouseCatch = true;
-			timer = 10;
-		}
-		else if (glfwGetKey(glfw_window, GLFW_KEY_M) == GLFW_PRESS && mouseCatch && timer < 0)
-		{
-			glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			mouseCatch = false;
-			timer = 10;
-		}
-		if (timer > -1)
-			timer--;
 		/* MOUSE LOOK */
 		double cursor_position_x;
 		double cursor_position_y;

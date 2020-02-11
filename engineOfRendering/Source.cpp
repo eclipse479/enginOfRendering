@@ -214,7 +214,7 @@ int main()
 	float lastFrame = 0;
 	float deltaTime = 0;
 	glfwSetCursorPos(window, 1280 * 0.5, 720 * 0.5);
-
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -222,26 +222,26 @@ int main()
 		currentFrame = float(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		if (glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
-		{
-			glClearColor(0.5, 1.0, 1.0, 1.0);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
-		}
-		else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		{
-			glClearColor(0.0, 1.0, 0.0, 1.0);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		}
-		else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		{
-			glClearColor(1.0, 0.0, 0.0, 1.0);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		}
-		else
-		{
-			glClearColor(0.0, 0.0, 0.0, 1.0);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		}
+		//if (glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
+		//{
+		//	glClearColor(0.5, 1.0, 1.0, 1.0);
+		//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+		//}
+		//else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		//{
+		//	glClearColor(0.0, 1.0, 0.0, 1.0);
+		//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//}
+		//else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		//{
+		//	glClearColor(1.0, 0.0, 0.0, 1.0);
+		//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//}
+		//else
+		//{
+		//	glClearColor(0.0, 0.0, 0.0, 1.0);
+		//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//}
 
 		theFlyingCamera.update(deltaTime);
 	   
