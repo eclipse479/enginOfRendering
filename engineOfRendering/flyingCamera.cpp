@@ -27,7 +27,7 @@ void flyingCamera::update(float deltaTime)
 		displacement.y -= glfwGetKey(glfw_window, GLFW_KEY_E);
 		//moves the camera in the direction the camera is facing
 		
-		glm::vec4 moveDirection = -displacement.z * worldTransform[2] + displacement.x * worldTransform[0] + displacement.y * worldTransform[1];
+		glm::vec4 moveDirection =  displacement.x * worldTransform[0] + displacement.y * worldTransform[1] - displacement.z * worldTransform[2];
 		glm::normalize(moveDirection);
 
 	    this->worldTransform[3] += (moveDirection * speed * deltaTime);

@@ -7,6 +7,8 @@
 
 #include "camera.h"
 #include "flyingCamera.h"
+#include "lightSource.h"
+#include "mesh.h"
 
 using uint = unsigned int;
 
@@ -16,9 +18,10 @@ int main()
 	return -1;
 
 	GLFWwindow* window = glfwCreateWindow(1280, 720, "Computer Graphics", nullptr, nullptr);
-
+	mesh theMesh;
 	flyingCamera theFlyingCamera;
-	//camera theCamera;
+
+	lightSource theLight;
 	if (window == nullptr)
 	{
 		glfwTerminate();
@@ -48,10 +51,16 @@ int main()
 		glm::vec3(-0.5f, 0.5f, -0.5),    // 4
 		glm::vec3(0.5f, 0.5f, -0.5),     // 5
 		glm::vec3(-0.5f, -0.5f, -0.5),  // 6
-		glm::vec3(0.5f, -0.5f, -0.5)    // 7
+		glm::vec3(0.5f, -0.5f, -0.5),    // 7
+
+		glm::vec3(0.75f, 0.5f, 0.5),		  // 8
+		glm::vec3(0.9f, 0.5f, 0.5),			  // 9
+		glm::vec3(0.75f, 0.2f, 0.5),		 // 10
+		glm::vec3(0.9f, 0.3f, 0.5)		 // 11
 	};
-	int numberOfVerts = 36;
-	int indexBuffer[]{ 0,1,2,
+	int numberOfVerts = 42;
+	int indexBuffer[]{
+		0,1,2,
 		1,3,2,
 		4,6,5,
 		5,6,7,
@@ -62,36 +71,16 @@ int main()
 		0,4,1,
 		4,5,1,
 		2,3,6,
-		3,7,6
+		3,7,6,
+		8,9,10,
+		9,11,10
 	};
 	///create and load MESH
 
-			///		Perspective(FieldOfView, ScreenAspectRatio, nearPoint, farPoint)
-	
-	///		lookAt(cameraPos, thingToLookAt, directionOfUp)
 	glm::mat4 model = glm::mat4(1.0f);
 
 	/*send info to the GPU-------------------*/
-	uint VAO;
-	uint VBO;
-	uint IBO;
-
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &IBO);
-
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(glm::vec3), Vertecies, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numberOfVerts * sizeof(int), indexBuffer, GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
+	theMesh.meshSetUp(Vertecies,numberOfVerts,indexBuffer);
     //--------------------------------------
 
 
@@ -205,11 +194,6 @@ int main()
 	glPolygonMode(GL_FRONT, GL_LINE);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	///----------GAME LOOP----------///
-	bool up = true;
-	float sinNumber = 0;
-	float cosNumber = 0;
-	float number = 0;
-
 	float currentFrame = 0;
 	float lastFrame = 0;
 	float deltaTime = 0;
@@ -222,51 +206,23 @@ int main()
 		currentFrame = float(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		//if (glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
-		//{
-		//	glClearColor(0.5, 1.0, 1.0, 1.0);
-		//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
-		//}
-		//else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		//{
-		//	glClearColor(0.0, 1.0, 0.0, 1.0);
-		//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//}
-		//else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		//{
-		//	glClearColor(1.0, 0.0, 0.0, 1.0);
-		//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//}
-		//else
-		//{
-		//	glClearColor(0.0, 0.0, 0.0, 1.0);
-		//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//}
-
+	
 		theFlyingCamera.update(deltaTime);
 	   
-	  
-	   //view = glm::lookAt(glm::vec3(1.507f, 0, 1), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-
-
+	 
 	   glUseProgram(shaderProgramID);
 	   //rotates the object
 	   model = glm::rotate(model, 0.016f, glm::vec3(1, 0, 0));
 
 	  //for colour changing properties
-	  sinNumber = sin(number);
-	  cosNumber = cos(number);
-	  if (sinNumber < 0)
-	  {
-		  sinNumber = -sinNumber;
-	  }
-	  if (cosNumber < 0)
-	  {
-		  cosNumber = -cosNumber;
-	  }
-	   glm::vec4 color = glm::vec4(sinNumber, cosNumber, sin(cosNumber),1.0f);
-	   number += 0.03f;
+		if (glfwGetKey(window,GLFW_KEY_SPACE) == GLFW_PRESS)
+		{
+			theLight.setColour(glm::vec3(0.0f, 1.0f, 0.5f));
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+		}
+	   glm::vec4 color = glm::vec4(theLight.getColour(),1.0f);
 	   //----------END COLOUR CHANGING PROPERTIES-------------------------
+
 	   auto uniformLocation = glGetUniformLocation(shaderProgramID, "projection_view_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(theFlyingCamera.getProjectionView()));
 
@@ -277,16 +233,15 @@ int main()
 	   uniformLocation = glGetUniformLocation(shaderProgramID, "color");
 	   glUniform4fv(uniformLocation, 1, glm::value_ptr(color));
 
-	   glBindVertexArray(VAO);
+	   glBindVertexArray(theMesh.getVAO());
 	   //glDrawArrays(GL_TRIANGLES, 0, 4);
-	   glDrawElements(GL_TRIANGLES, numberOfVerts, GL_UNSIGNED_INT,0);
+	   theMesh.drawCube(numberOfVerts);
 	   
 	   glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	glDeleteBuffers(1,&VAO);
-	glDeleteBuffers(1, &VBO);
+	theMesh.~mesh();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
