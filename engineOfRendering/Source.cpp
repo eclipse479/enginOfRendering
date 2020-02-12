@@ -9,6 +9,7 @@
 #include "flyingCamera.h"
 #include "lightSource.h"
 #include "mesh.h"
+#include "shaders.h"
 
 using uint = unsigned int;
 
@@ -20,7 +21,7 @@ int main()
 	GLFWwindow* window = glfwCreateWindow(1280, 720, "Computer Graphics", nullptr, nullptr);
 	mesh theMesh;
 	flyingCamera theFlyingCamera;
-
+	shaders errorCheck;
 	lightSource theLight;
 	if (window == nullptr)
 	{
@@ -84,112 +85,15 @@ int main()
     //--------------------------------------
 
 
-	uint vertexShaderID = 0;
-	uint fragmentShaderID = 0;
-	uint shaderProgramID = 0;
 
+	errorCheck.createVertexShader();
+	errorCheck.errorCheck("Vertex");
 
-	std::string shaderData;
-	std::ifstream inFileStream("..\\shaders\\simple_vertex.glsl", std::ifstream::in);
-	std::stringstream stringStream;
-	if (inFileStream.is_open())
-	{
-		stringStream << inFileStream.rdbuf();
-		shaderData = stringStream.str();
-		inFileStream.close();
-	}
-	//allocate space for shader program
-	vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	//convert to raw char*
-	const char* data = shaderData.c_str();
-	//send in the char* to shader location
-	glShaderSource(vertexShaderID, 1, (const GLchar**)&data, 0);
-	//build
-	glCompileShader(vertexShaderID);
+	errorCheck.createFragmentShader();
+	errorCheck.errorCheck("Fragment");
 
-	//did it work?
-	GLint success = GL_FALSE;
-	glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		//get length of open GL error message
-		GLint logLength = 0;
-		glGetShaderiv(shaderProgramID, GL_INFO_LOG_LENGTH, &logLength);
-		//create new error buffer
-		char* log = new char[logLength];
-		//copy the error into the buffer
-		glGetShaderInfoLog(shaderProgramID, logLength, 0, log);
-		//create error message
-		std::string errorMessage(log);
-		errorMessage += "Vertex failed to compile";
-		printf(errorMessage.c_str());
-		//clean up
-		delete[] log;
-	}
-
-	std::ifstream fragInFileStream("..\\shaders\\simple_frag.glsl", std::ifstream::in);
-	std::stringstream fragStringStream;
-	if (fragInFileStream.is_open())
-	{
-		fragStringStream << fragInFileStream.rdbuf();
-		shaderData = fragStringStream.str();
-		fragInFileStream.close();
-	}
-	//allocate space for shader program
-	fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	//convert to raw char*
-	data = shaderData.c_str();
-	//send in the char* to shader location
-	glShaderSource(fragmentShaderID, 1, (const GLchar**)&data, 0);
-	//build
-	glCompileShader(fragmentShaderID);
-
-	//did it work?
-	success = GL_FALSE;
-	glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		//get length of open GL error message
-		GLint logLength = 0;
-		glGetShaderiv(shaderProgramID, GL_INFO_LOG_LENGTH, &logLength);
-		//create new error buffer
-		char* log = new char[logLength];
-		//copy the error into the buffer
-		glGetShaderInfoLog(shaderProgramID, logLength, 0, log);
-		//create error message
-		std::string errorMessage(log);
-		errorMessage += "fragment failed to compile";
-		printf(errorMessage.c_str());
-		//clean up
-		delete[] log;
-	}
-
-	//create shader program
-	shaderProgramID = glCreateProgram();
-	//attach both shaders by ID and type
-	glAttachShader(shaderProgramID, vertexShaderID);
-	glAttachShader(shaderProgramID, fragmentShaderID);
-
-	//link both programs
-	glLinkProgram(shaderProgramID);
-	success = GL_FALSE;
-	glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		//get length of open GL error message
-		GLint logLength = 0;
-		glGetShaderiv(shaderProgramID, GL_INFO_LOG_LENGTH, &logLength);
-		//create new error buffer
-		char* log = new char[logLength];
-		//copy the error into the buffer
-		glGetProgramInfoLog(shaderProgramID, logLength, 0, log);
-		//create error message
-		std::string errorMessage(log);
-		errorMessage += "Linking failed to compile";
-		printf(errorMessage.c_str());
-		//clean up
-		delete[] log;
-	}
+	errorCheck.linkShaderProgram();
+	errorCheck.errorCheck("Linking");
 
 	glPolygonMode(GL_FRONT, GL_LINE);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -210,7 +114,7 @@ int main()
 		theFlyingCamera.update(deltaTime);
 	   
 	 
-	   glUseProgram(shaderProgramID);
+	   glUseProgram(errorCheck.getShaderID());
 	   //rotates the object
 	   model = glm::rotate(model, 0.016f, glm::vec3(1, 0, 0));
 
@@ -218,19 +122,19 @@ int main()
 		if (glfwGetKey(window,GLFW_KEY_SPACE) == GLFW_PRESS)
 		{
 			theLight.setColour(glm::vec3(0.0f, 1.0f, 0.5f));
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+			//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
 		}
 	   glm::vec4 color = glm::vec4(theLight.getColour(),1.0f);
 	   //----------END COLOUR CHANGING PROPERTIES-------------------------
 
-	   auto uniformLocation = glGetUniformLocation(shaderProgramID, "projection_view_matrix");
+	   auto uniformLocation = glGetUniformLocation(errorCheck.getShaderID(), "projection_view_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(theFlyingCamera.getProjectionView()));
 
-	   uniformLocation = glGetUniformLocation(shaderProgramID, "model_matrix");
+	   uniformLocation = glGetUniformLocation(errorCheck.getShaderID(), "model_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
 
 	   //sets the colour for the polygons drawn
-	   uniformLocation = glGetUniformLocation(shaderProgramID, "color");
+	   uniformLocation = glGetUniformLocation(errorCheck.getShaderID(), "color");
 	   glUniform4fv(uniformLocation, 1, glm::value_ptr(color));
 
 	   glBindVertexArray(theMesh.getVAO());
