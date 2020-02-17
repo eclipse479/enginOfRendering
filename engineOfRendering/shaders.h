@@ -11,6 +11,8 @@ public:
 	void createVertexShader();
 	void createFragmentShader();
 	void linkShaderProgram();
+	void createLightShader();
+	
 	unsigned int getShaderID();
 private:
 	std::string shaderData;
@@ -21,6 +23,7 @@ private:
 
 	unsigned int vertexShaderID = 0;
 	unsigned int fragmentShaderID = 0;
+	unsigned int lightShaderID = 0;
 	unsigned int shaderProgramID = 0;
 };
 

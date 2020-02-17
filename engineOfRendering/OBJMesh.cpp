@@ -148,7 +148,6 @@ bool OBJMesh::load(const char* filename, bool loadTextures /* = true */, bool fl
 }
 
 void OBJMesh::draw(bool usePatches /* = false */) {
-
 	int program = -1;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &program);
 

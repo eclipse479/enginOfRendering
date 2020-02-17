@@ -12,18 +12,14 @@ public:
 
 	glm::vec3 getColour();
 	void setColour(glm::vec3 newColour);
+	void readyLight(glm::vec3 Vertecies[], int numberOfVerts, int indexBuffer[]);
+	void drawLight(int numberOfVerts);
 private:
 	glm::vec3 lightColour = glm::vec3(1.0f, 1.0f, 1.0f);
-	glm::vec3 cubeColour = glm::vec3(1.0f, 0.0f, 0.5f);
+	glm::vec3 cubeColour = glm::vec3(0.75f, 0.0f, 0.75f);
 
-	glm::vec4 position;
-	glm::vec4 normal;
-
-	float ambientStrength = 0.3f;
-	glm::vec3 ambient = ambientStrength * lightColour;
-
-	glm::vec3 result = ambient * cubeColour;
-
-	glm::vec4 fragColour = glm::vec4((result), 1.0f);
+	unsigned int lightVAO;
+	unsigned int lightVBO;
+	unsigned int lightIBO;
 };
 

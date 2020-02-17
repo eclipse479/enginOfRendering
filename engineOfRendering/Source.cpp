@@ -21,10 +21,11 @@ int main()
 
 	GLFWwindow* window = glfwCreateWindow(1280, 720, "Computer Graphics", nullptr, nullptr);
 	mesh theMesh;
-	mesh sun;
 	flyingCamera theFlyingCamera;
-	shaders errorCheck;
+	shaders shaders;
 	lightSource theLight;
+	lightSource sun;
+	aie::OBJMesh swoleBear;
 	if (window == nullptr)
 	{
 		glfwTerminate();
@@ -86,31 +87,35 @@ int main()
 	///create and load MESH
 
 	glm::mat4 model = glm::mat4(1.0f);
-
+	swoleBear.load("..\\models\\swoleBear.obj");
 	/*send info to the GPU-------------------*/
 	theMesh.meshSetUp(Vertecies,numberOfVerts,indexBuffer);
-	sun.meshSetUp(sunVertex, numberOfVerts, indexBuffer);
+	sun.readyLight(sunVertex,numberOfVerts,indexBuffer);
     //--------------------------------------
 
+	
+
+	shaders.createVertexShader();
+	shaders.errorCheck("Vertex");
+
+	shaders.createFragmentShader();
+	shaders.errorCheck("Fragment");
+
+	shaders.linkShaderProgram();
+	shaders.errorCheck("Linking");
 
 
-	errorCheck.createVertexShader();
-	errorCheck.errorCheck("Vertex");
 
-	errorCheck.createFragmentShader();
-	errorCheck.errorCheck("Fragment");
 
-	errorCheck.linkShaderProgram();
-	errorCheck.errorCheck("Linking");
-
-	glPolygonMode(GL_FRONT, GL_LINE);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//glPolygonMode(GL_BACK, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	///----------GAME LOOP----------///
 	float currentFrame = 0;
 	float lastFrame = 0;
 	float deltaTime = 0;
 	glfwSetCursorPos(window, 1280 * 0.5, 720 * 0.5);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glClearColor(1.0f,10.f,1.0f,1.0f);
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -122,9 +127,9 @@ int main()
 		theFlyingCamera.update(deltaTime);
 	   
 	 
-	   glUseProgram(errorCheck.getShaderID());
+	   glUseProgram(shaders.getShaderID());
 	   //rotates the object
-	   //model = glm::rotate(model, 0.016f, glm::vec3(1, 0, 0));
+	   //model = glm::rotate(model, 0.016f, glm::vec3(0, 10, 0));
 
 	  //for colour changing properties
 		if (glfwGetKey(window,GLFW_KEY_SPACE) == GLFW_PRESS)
@@ -135,28 +140,42 @@ int main()
 	   glm::vec4 color = glm::vec4(theLight.getColour(),1.0f);
 	   //----------END COLOUR CHANGING PROPERTIES-------------------------
 
-	   auto uniformLocation = glGetUniformLocation(errorCheck.getShaderID(), "projection_view_matrix");
+
+	   auto uniformLocation = glGetUniformLocation(shaders.getShaderID(), "objectColor");
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.75f, 0.0f, 0.75f)));
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "lightColor");
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(1.0f)));
+
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "projection_view_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(theFlyingCamera.getProjectionView()));
 
-	   uniformLocation = glGetUniformLocation(errorCheck.getShaderID(), "model_matrix");
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "model_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
 
 	   //sets the colour for the polygons drawn
-	   uniformLocation = glGetUniformLocation(errorCheck.getShaderID(), "color");
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "color");
 	   glUniform4fv(uniformLocation, 1, glm::value_ptr(color));
 
+
+
 	  /* glBindVertexArray(theMesh.getVAO());
-	   glBindVertexArray(sun.getVAO());*/
+
+	   */
 	   //glDrawArrays(GL_TRIANGLES, 0, 4);
+	   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	   swoleBear.draw(false);
 	   theMesh.drawCube(numberOfVerts);
-	   sun.drawCube(numberOfVerts);
+	   glPolygonMode(GL_BACK, GL_FILL);
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "objectColor");
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, 0.5f)));
+	   sun.drawLight(36);
 	   
 	   glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
 	theMesh.~mesh();
-	sun.~mesh();
+	swoleBear.~OBJMesh();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;

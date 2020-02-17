@@ -41,6 +41,27 @@ void shaders::createFragmentShader()
 	//build
 	glCompileShader(fragmentShaderID);
 }
+
+void shaders::createLightShader()
+{
+	std::ifstream fragInFileStream("..\\shaders\\lightFrag.glsl", std::ifstream::in);
+	std::stringstream fragStringStream;
+	if (fragInFileStream.is_open())
+	{
+		fragStringStream << fragInFileStream.rdbuf();
+		shaderData = fragStringStream.str();
+		fragInFileStream.close();
+	}
+	//allocate space for shader program
+	lightShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	//convert to raw char*
+	data = shaderData.c_str();
+	//send in the char* to shader location
+	glShaderSource(lightShaderID, 1, (const GLchar**)&data, 0);
+	//build
+	glCompileShader(lightShaderID);
+}
+
 void shaders::linkShaderProgram()
 {
 	//create shader program
@@ -48,7 +69,6 @@ void shaders::linkShaderProgram()
 	//attach both shaders by ID and type
 	glAttachShader(shaderProgramID, vertexShaderID);
 	glAttachShader(shaderProgramID, fragmentShaderID);
-
 	//link both programs
 	glLinkProgram(shaderProgramID);
 }
