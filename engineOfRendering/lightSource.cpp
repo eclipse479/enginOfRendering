@@ -6,7 +6,7 @@ lightSource::lightSource()
 
 glm::vec3 lightSource::getColour()
 {
-	return cubeColour;
+	return fragColour;
 }
 
 void lightSource::setColour(glm::vec3 newColour)

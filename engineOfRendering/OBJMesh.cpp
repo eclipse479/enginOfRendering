@@ -1,9 +1,9 @@
 #include "OBJMesh.h"
-#include "..\gl_core\gl_core_4_5.h"
-#include <glm/geometric.hpp>
+#include "gl_core_4_5.h"
+#include <geometric.hpp>
 
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "..\dependencies\tiny_obj\tiny_obj_loader.h"
+#include "..\Dependencies\tiny_obj_loader.h"
 
 namespace aie {
 

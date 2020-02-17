@@ -9,6 +9,7 @@ mesh::~mesh()
 {
 	glDeleteBuffers(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &IBO);
 }
 
 void mesh::meshSetUp(glm::vec3 Vertecies[], int numberOfVerts, int indexBuffer[])
@@ -45,5 +46,6 @@ unsigned int mesh::getIBO()
 
 void mesh::drawCube(int numberOfVerts)
 {
+	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, numberOfVerts, GL_UNSIGNED_INT, 0);
 }

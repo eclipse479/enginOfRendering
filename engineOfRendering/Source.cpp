@@ -5,6 +5,7 @@
 #include "fstream"
 #include "sstream"
 
+#include "OBJMesh.h"
 #include "camera.h"
 #include "flyingCamera.h"
 #include "lightSource.h"
@@ -20,6 +21,7 @@ int main()
 
 	GLFWwindow* window = glfwCreateWindow(1280, 720, "Computer Graphics", nullptr, nullptr);
 	mesh theMesh;
+	mesh sun;
 	flyingCamera theFlyingCamera;
 	shaders errorCheck;
 	lightSource theLight;
@@ -45,21 +47,28 @@ int main()
 	//mesh data
 	glm::vec3 Vertecies[] =
 	{
-		glm::vec3(-0.5f, 0.5f, 0.5),		  // 0
-		glm::vec3(0.5f, 0.5f, 0.5),			  // 1
-		glm::vec3(-0.5f, -0.5f, 0.5),		 // 2
-		glm::vec3(0.5f, -0.5f, 0.5),		 // 3 
-		glm::vec3(-0.5f, 0.5f, -0.5),    // 4
-		glm::vec3(0.5f, 0.5f, -0.5),     // 5
-		glm::vec3(-0.5f, -0.5f, -0.5),  // 6
-		glm::vec3(0.5f, -0.5f, -0.5),    // 7
-
-		glm::vec3(0.75f, 0.5f, 0.5),		  // 8
-		glm::vec3(0.9f, 0.5f, 0.5),			  // 9
-		glm::vec3(0.75f, 0.2f, 0.5),		 // 10
-		glm::vec3(0.9f, 0.3f, 0.5)		 // 11
+		glm::vec3(-0.5f, 0.5f, 0.5f),		  // 0
+		glm::vec3(0.5f, 0.5f, 0.5f),			  // 1
+		glm::vec3(-0.5f, -0.5f, 0.5f),		 // 2
+		glm::vec3(0.5f, -0.5f, 0.5f),		 // 3 
+		glm::vec3(-0.5f, 0.5f, -0.5f),    // 4
+		glm::vec3(0.5f, 0.5f, -0.5f),     // 5
+		glm::vec3(-0.5f, -0.5f, -0.5f),  // 6
+		glm::vec3(0.5f, -0.5f, -0.5f),    // 7
 	};
-	int numberOfVerts = 42;
+
+	glm::vec3 sunVertex[] =
+	{
+		glm::vec3(0.75f, 0.95f, 0.75f),		  // 0
+		glm::vec3(0.95f, 0.95f, 0.75f),			  // 1
+		glm::vec3(0.75f, 0.75f, 0.75f),		 // 2
+		glm::vec3(0.95f, 0.75f, 0.75f),		 // 3 
+		glm::vec3(0.75f, 0.95f, 0.5f),		  // 4
+		glm::vec3(0.95f, 0.95f, 0.5f),		  // 5
+		glm::vec3(0.75f, 0.75f, 0.5f),		 // 6
+		glm::vec3(0.95f, 0.75f, 0.5f),		 // 7 
+	};
+	int numberOfVerts = 36;
 	int indexBuffer[]{
 		0,1,2,
 		1,3,2,
@@ -73,8 +82,6 @@ int main()
 		4,5,1,
 		2,3,6,
 		3,7,6,
-		8,9,10,
-		9,11,10
 	};
 	///create and load MESH
 
@@ -82,6 +89,7 @@ int main()
 
 	/*send info to the GPU-------------------*/
 	theMesh.meshSetUp(Vertecies,numberOfVerts,indexBuffer);
+	sun.meshSetUp(sunVertex, numberOfVerts, indexBuffer);
     //--------------------------------------
 
 
@@ -116,7 +124,7 @@ int main()
 	 
 	   glUseProgram(errorCheck.getShaderID());
 	   //rotates the object
-	   model = glm::rotate(model, 0.016f, glm::vec3(1, 0, 0));
+	   //model = glm::rotate(model, 0.016f, glm::vec3(1, 0, 0));
 
 	  //for colour changing properties
 		if (glfwGetKey(window,GLFW_KEY_SPACE) == GLFW_PRESS)
@@ -137,15 +145,18 @@ int main()
 	   uniformLocation = glGetUniformLocation(errorCheck.getShaderID(), "color");
 	   glUniform4fv(uniformLocation, 1, glm::value_ptr(color));
 
-	   glBindVertexArray(theMesh.getVAO());
+	  /* glBindVertexArray(theMesh.getVAO());
+	   glBindVertexArray(sun.getVAO());*/
 	   //glDrawArrays(GL_TRIANGLES, 0, 4);
 	   theMesh.drawCube(numberOfVerts);
+	   sun.drawCube(numberOfVerts);
 	   
 	   glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
 	theMesh.~mesh();
+	sun.~mesh();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
