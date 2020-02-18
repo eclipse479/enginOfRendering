@@ -51,7 +51,7 @@ int main()
 	Vertecies Vertex[] =
 	{ //            ---position---                          ---UV---
 		glm::vec3(-0.5f, 0.5f, 0.5f),	       glm::vec2 (0,0),  // 0
-		glm::vec3(0.5f, 0.5f, 0.5f),	   	   glm::vec2 (1,0), // 1
+		glm::vec3(0.5f, 0.5f, 0.5f),	   	   glm::vec2 (5,0), // 1
 		glm::vec3(-0.5f, -0.5f, 0.5f),       glm::vec2 (0,1),// 2
 		glm::vec3(0.5f, -0.5f, 0.5f),    	   glm::vec2 (1,1), // 3 
 		glm::vec3(-0.5f, 0.5f, -0.5f),       glm::vec2 (0,1),   // 4
