@@ -1,9 +1,10 @@
 #include "shaders.h"
 
-void shaders::createVertexShader()
+void shaders::createVertexShader(std::string shaderPath)
 {
-	std::ifstream inFileStream("..\\shaders\\simple_vertex.glsl", std::ifstream::in);
-
+	std::ifstream inFileStream(shaderPath, std::ifstream::in);
+	std::stringstream stringStream;
+	const char* data;
 	if (inFileStream.is_open())
 	{
 		stringStream << inFileStream.rdbuf();
@@ -19,13 +20,14 @@ void shaders::createVertexShader()
 	//build
 	glCompileShader(vertexShaderID);
 
-	
+	errorCheck("Vertex");
 }
 
-void shaders::createFragmentShader()
+void shaders::createFragmentShader(std::string shaderPath)
 {
-	std::ifstream fragInFileStream("..\\shaders\\simple_frag.glsl", std::ifstream::in);
+	std::ifstream fragInFileStream(shaderPath, std::ifstream::in);
 	std::stringstream fragStringStream;
+	const char* data;
 	if (fragInFileStream.is_open())
 	{
 		fragStringStream << fragInFileStream.rdbuf();
@@ -40,26 +42,7 @@ void shaders::createFragmentShader()
 	glShaderSource(fragmentShaderID, 1, (const GLchar**)&data, 0);
 	//build
 	glCompileShader(fragmentShaderID);
-}
-
-void shaders::createLightShader()
-{
-	std::ifstream fragInFileStream("..\\shaders\\lightFrag.glsl", std::ifstream::in);
-	std::stringstream fragStringStream;
-	if (fragInFileStream.is_open())
-	{
-		fragStringStream << fragInFileStream.rdbuf();
-		shaderData = fragStringStream.str();
-		fragInFileStream.close();
-	}
-	//allocate space for shader program
-	lightShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	//convert to raw char*
-	data = shaderData.c_str();
-	//send in the char* to shader location
-	glShaderSource(lightShaderID, 1, (const GLchar**)&data, 0);
-	//build
-	glCompileShader(lightShaderID);
+	errorCheck("Fragment");
 }
 
 void shaders::linkShaderProgram()
@@ -71,6 +54,7 @@ void shaders::linkShaderProgram()
 	glAttachShader(shaderProgramID, fragmentShaderID);
 	//link both programs
 	glLinkProgram(shaderProgramID);
+	errorCheck("Linking");
 }
 void shaders::errorCheck(std::string shaderType)
 {

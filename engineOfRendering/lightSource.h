@@ -4,7 +4,6 @@
 #include "ext.hpp"
 #include "glm.hpp"
 
-
 class lightSource
 {
 public:

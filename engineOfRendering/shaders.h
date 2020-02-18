@@ -6,24 +6,22 @@
 class shaders
 {
 public:
-	void errorCheck(std::string shaderType);
-
-	void createVertexShader();
-	void createFragmentShader();
+	//gets the path to the vertex shader and sends it to the GPU
+	void createVertexShader(std::string shaderType);
+	//gets the path to the  fragment shader and sends it to the GPU
+	void createFragmentShader(std::string shaderType); 
+	//connect the vertex and fragment shader
 	void linkShaderProgram();
-	void createLightShader();
 	
 	unsigned int getShaderID();
 private:
+	//makes sure thing work and displays error if it doesn't
+	void errorCheck(std::string shaderType);
 	std::string shaderData;
-
-	std::stringstream stringStream;
-
-	const char* data;
-
+	//ID's for the various shaders
 	unsigned int vertexShaderID = 0;
 	unsigned int fragmentShaderID = 0;
-	unsigned int lightShaderID = 0;
+	//ID for the program
 	unsigned int shaderProgramID = 0;
 };
 

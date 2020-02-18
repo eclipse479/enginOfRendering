@@ -1,0 +1,19 @@
+#version 450
+
+uniform sampler2D diffuse_texture;
+uniform vec4 tint_colour;
+
+in vec2 finalTextureCoordinates;
+
+out vec4 finalColour;
+
+void main()
+{
+finalTextureCoordinates = (diffuse_texture, finalTextureCoordinates) * tint_colour;
+
+if(finalColour < 1
+	{
+		discard;
+	}
+
+}

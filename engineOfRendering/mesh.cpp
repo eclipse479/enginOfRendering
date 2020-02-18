@@ -12,7 +12,7 @@ mesh::~mesh()
 	glDeleteBuffers(1, &IBO);
 }
 
-void mesh::meshSetUp(glm::vec3 Vertecies[], int numberOfVerts, int indexBuffer[])
+void mesh::meshSetUp(Vertecies Vertecies[], int numberOfVerts, int indexBuffer[])
 {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -25,7 +25,10 @@ void mesh::meshSetUp(glm::vec3 Vertecies[], int numberOfVerts, int indexBuffer[]
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numberOfVerts * sizeof(int), indexBuffer, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3* sizeof(float)));
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);	

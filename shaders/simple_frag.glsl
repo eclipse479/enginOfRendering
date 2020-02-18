@@ -1,18 +1,11 @@
-#version 450
+#version 450 // Frag Shader
 
-uniform vec4 color = vec4(1,1,1,1);
+uniform sampler2D diffuse_texture;
 
-
-
+in vec2 final_texture_coodinates;
 out vec4 final_color;
-
-uniform vec3 objectColor;
-uniform vec3 lightColor;
 
 void main()
 {
-	float ambientStrength = 0.5f;
-	vec3 ambient = ambientStrength * lightColor * objectColor;
- 
-   final_color =vec4(ambient,1.0f);
+    final_color = texture(diffuse_texture, final_texture_coodinates);
 }

@@ -3,10 +3,17 @@
 #include "glfw3.h"
 #include "ext.hpp"
 #include "glm.hpp"
+
+struct Vertecies
+{
+	glm::vec3 position;
+	glm::vec2 UV;
+};
+
 class mesh
 {
 public:
-	void meshSetUp(glm::vec3 Vertecies[], int numberOfVerts, int indexBuffer[]);
+	void meshSetUp(Vertecies Vertex[], int numberOfVerts, int indexBuffer[]);
 
 	mesh();
 	~mesh();
