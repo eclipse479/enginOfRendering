@@ -27,7 +27,7 @@ int main()
 	shaders shaders;
 	lightSource theLight;
 	lightSource sun;
-	//aie::OBJMesh swoleBear;
+	aie::OBJMesh swoleBear;
 	if (window == nullptr)
 	{
 		glfwTerminate();
@@ -88,7 +88,8 @@ int main()
 	};
 	///create and load MESH
 	glm::mat4 model = glm::mat4(1.0f);
-	//swoleBear.load("..\\models\\swoleBear.obj");
+	swoleBear.load("..\\models\\swoleBear.obj");
+	
 	/*----------------------send info to the GPU-------------------*/
 	theMesh.meshSetUp(Vertex,numberOfVerts,indexBuffer);
 
@@ -96,15 +97,26 @@ int main()
 
 	uint texture;
 	int width, height, n;
+	unsigned char* data = stbi_load("..\\images\\flower.jpg", &width, &height, &n, 0);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	unsigned char* data = stbi_load("..\\images\\Shrek.jpg", &width, &height, &n, 0);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // GL_LINEAR SAMPLES texels
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // GL_NEARESTS RETURNS just closest pixel
-	stbi_image_free(	data);
+	
+	uint texture2;
+	int width2, height2, n2;
+	unsigned char* data2 = stbi_load("..\\images\\Bear_Blue_Base_Color.png", &width2, &height2, &n2, 0);
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
+
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // GL_LINEAR SAMPLES texels
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // GL_NEARESTS RETURNS just closest pixel
+	stbi_image_free(	data2);
 
 	shaders.createVertexShader("..\\shaders\\simple_vertex.glsl");
 
@@ -123,7 +135,8 @@ int main()
 	float deltaTime = 0;
 	glfwSetCursorPos(window, 1280 * 0.5, 720 * 0.5);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	//glClearColor(1.0f,1.0f,1.0f,1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(1.0f,1.0f,1.0f,1.0f);
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -164,11 +177,12 @@ int main()
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "color");
 	   glUniform4fv(uniformLocation, 1, glm::value_ptr(color));
 
-	   glBindTexture(GL_TEXTURE_2D, texture);
 
+	   glBindTexture(GL_TEXTURE_2D, texture);
 	   theMesh.drawCube(numberOfVerts);
-	   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	   //swoleBear.draw(false);
+	   glBindTexture(GL_TEXTURE_2D, texture2);
+	   swoleBear.draw(false);
+	   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	   glPolygonMode(GL_BACK, GL_FILL);
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "objectColor");
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, 0.5f)));
@@ -179,7 +193,7 @@ int main()
 	}
 
 	theMesh.~mesh();
-	//swoleBear.~OBJMesh();
+	swoleBear.~OBJMesh();
 	glDeleteTextures(1, &texture);
 	glfwDestroyWindow(window);
 	glfwTerminate();
