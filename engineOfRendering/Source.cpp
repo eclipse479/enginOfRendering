@@ -109,19 +109,26 @@ int main()
 
 	uint texture;
 	int width, height, n;
+<<<<<<< Updated upstream
 	//finds the image
 	unsigned char* data = stbi_load("..\\images\\Shrek.png", &width, &height, &n, 0);
+=======
+>>>>>>> Stashed changes
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
+	unsigned char* data = stbi_load("..\\images\\Shrek.png", &width, &height, &n, 0);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // GL_LINEAR SAMPLES texels
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // GL_NEARESTS RETURNS just closest pixel
+<<<<<<< Updated upstream
 	//sets the textures to mirrored repeat
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 	//clears up memory
+=======
+>>>>>>> Stashed changes
 	stbi_image_free(data);
 
 	uint texture2;
@@ -219,6 +226,7 @@ int main()
 	theMesh.~mesh();
 	swoleBear.~OBJMesh();
 	glDeleteTextures(1, &texture);
+	glDeleteTextures(1, &texture2);
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
