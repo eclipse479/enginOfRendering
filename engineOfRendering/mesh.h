@@ -3,19 +3,20 @@
 #include "glfw3.h"
 #include "ext.hpp"
 #include "glm.hpp"
+#include <vector>
 
-struct Vertecies
+struct Vertex
 {
 	glm::vec3 position;
 	glm::vec2 UV;
+	glm::vec3 normal;
 };
 
 class mesh
 {
 public:
-	void meshSetUp(Vertecies Vertex[], int numberOfVerts, int indexBuffer[]);
+	void meshSetUp(std::vector<Vertex> Vertex, std::vector<int> indexBuffer);
 
-	mesh();
 	~mesh();
 
 	unsigned int getVAO();
