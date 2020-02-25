@@ -1,9 +1,5 @@
 #include "mesh.h"
 
-mesh::mesh()
-{
-
-}
 
 mesh::~mesh()
 {
@@ -12,7 +8,7 @@ mesh::~mesh()
 	glDeleteBuffers(1, &IBO);
 }
 
-void mesh::meshSetUp(Vertecies Vertecies[], int numberOfVerts, int indexBuffer[])
+void mesh::meshSetUp(std::vector<Vertex> Vertecies, std::vector<int> indexBuffer)
 {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -20,15 +16,23 @@ void mesh::meshSetUp(Vertecies Vertecies[], int numberOfVerts, int indexBuffer[]
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(glm::vec3), Vertecies, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, /*number or vertecies used*/ Vertecies.size() * sizeof(Vertex) , &Vertecies[0], GL_STATIC_DRAW);
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numberOfVerts * sizeof(int), indexBuffer, GL_STATIC_DRAW);
-
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.size() * sizeof(int), &indexBuffer[0], GL_STATIC_DRAW);
+	
+	// Position
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 
+	// UV
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3* sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3* sizeof(float)));
+
+	//enable third element as normal
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(5 * sizeof(float)));
+
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);	

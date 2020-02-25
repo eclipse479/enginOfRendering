@@ -16,7 +16,7 @@ public:
 	unsigned int getShaderID();
 private:
 	//makes sure thing work and displays error if it doesn't
-	void errorCheck(std::string shaderType);
+	void printErrorLog(std::string shaderType);
 	std::string shaderData;
 	//ID's for the various shaders
 	unsigned int vertexShaderID = 0;

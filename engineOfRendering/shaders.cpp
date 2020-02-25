@@ -19,8 +19,12 @@ void shaders::createVertexShader(std::string shaderPath)
 	glShaderSource(vertexShaderID, 1, (const GLchar**)&data, 0);
 	//build
 	glCompileShader(vertexShaderID);
-
-	errorCheck("Vertex");
+	GLint success = GL_FALSE;
+	glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		printErrorLog("Vertex");
+	}
 }
 
 void shaders::createFragmentShader(std::string shaderPath)
@@ -42,7 +46,12 @@ void shaders::createFragmentShader(std::string shaderPath)
 	glShaderSource(fragmentShaderID, 1, (const GLchar**)&data, 0);
 	//build
 	glCompileShader(fragmentShaderID);
-	errorCheck("Fragment");
+	GLint success = GL_FALSE;
+	glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		printErrorLog("Fragment");
+	}
 }
 
 void shaders::linkShaderProgram()
@@ -54,29 +63,35 @@ void shaders::linkShaderProgram()
 	glAttachShader(shaderProgramID, fragmentShaderID);
 	//link both programs
 	glLinkProgram(shaderProgramID);
-	errorCheck("Linking");
-}
-void shaders::errorCheck(std::string shaderType)
-{
-	//did it work?
-	GLint success = GL_FALSE;
-	glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &success);
+
+	//check compile status
+	GLint logLength = 0;
+	glGetProgramiv(shaderProgramID, GL_INFO_LOG_LENGTH, &logLength);
+	char* log = new char[logLength];
+
+	GLint success = 0;
+	glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &success);
 	if (!success)
 	{
+		printErrorLog("Linking");
+	}
+}
+
+void shaders::printErrorLog(std::string shaderType)
+{
 		//get length of open GL error message
 		GLint logLength = 0;
-		glGetShaderiv(shaderProgramID, GL_INFO_LOG_LENGTH, &logLength);
+		glGetProgramiv(shaderProgramID, GL_INFO_LOG_LENGTH, &logLength);
 		//create new error buffer
 		char* log = new char[logLength];
-		//copy the error into the buffer
 		glGetProgramInfoLog(shaderProgramID, logLength, 0, log);
+		//copy the error into the buffer
 		//create error message
 		std::string errorMessage(log);
-		errorMessage += (shaderType + "failed to compile");
+		errorMessage += (shaderType + " failed to compile");
 		printf(errorMessage.c_str());
 		//clean up
 		delete[] log;
-	}
 }
 
 
