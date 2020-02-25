@@ -5,6 +5,7 @@
 #include "fstream"
 #include "sstream"
 #include <crtdbg.h>
+#include <iostream>
 
 #include "OBJMesh.h"
 #include "camera.h"
@@ -17,6 +18,11 @@
 
 using uint = unsigned int;
 
+struct light
+{
+	glm::vec3 direction;
+};
+
 int main()
 {
 
@@ -28,9 +34,9 @@ int main()
 	mesh theMesh;
 	flyingCamera theFlyingCamera;
 	shaders shaders;
-	lightSource theLight;
 	lightSource sun;
-	aie::OBJMesh swoleBear;
+	aie::OBJMesh bunBun;
+	light theLight;
 	if (window == nullptr)
 	{
 		glfwTerminate();
@@ -53,25 +59,16 @@ int main()
 	//mesh data
 	std::vector<Vertex> corners =
 	{ //            ---position---        ---UV---         ---Normal---
-		{glm::vec3(-0.5f, 0.5f, 0.5f),	 glm::vec2(0,0), glm::vec3(0,0,1)},     // top left       - 0
-		{glm::vec3(0.5f, 0.5f, 0.5f),	 glm::vec2(2,0), glm::vec3(0,0,1)},     // top right      - 1
-		{glm::vec3(-0.5f, -0.5f, 0.5f),  glm::vec2(0,2), glm::vec3(0,0,1)},     // bottom left    - 2
-		{glm::vec3(0.5f, -0.5f, 0.5f) ,  glm::vec2(2,2), glm::vec3(0,0,1)},     // bottom right   - 3 
-		{glm::vec3(-0.5f, 0.5f, -0.5f),  glm::vec2(0,2), glm::vec3(0,0,1)},     // top left       - 4
-		{glm::vec3(0.5f, 0.5f, -0.5f),   glm::vec2(2,2), glm::vec3(0,0,1)},     // top right      - 5
-		{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec2(0,0), glm::vec3(0,0,1)},     // bottom left    - 6
-		{glm::vec3(0.5f, -0.5f, -0.5f),  glm::vec2(2,0), glm::vec3(0,0,1)}     // bottom right   - 7
+		{glm::vec3(-0.5f, 0.5f, 0.5f),	 glm::vec2(0,0), glm::vec3(0,1,0)},     // top left       - 0
+		{glm::vec3(0.5f, 0.5f, 0.5f),	 glm::vec2(1,0), glm::vec3(0,1,0)},     // top right      - 1
+		{glm::vec3(-0.5f, -0.5f, 0.5f),  glm::vec2(0,1), glm::vec3(0,1,0)},     // bottom left    - 2
+		{glm::vec3(0.5f, -0.5f, 0.5f) ,  glm::vec2(1,1), glm::vec3(0,1,0)},     // bottom right   - 3 
+		{glm::vec3(-0.5f, 0.5f, -0.5f),  glm::vec2(0,1), glm::vec3(0,1,0)},     // top left       - 4
+		{glm::vec3(0.5f, 0.5f, -0.5f),   glm::vec2(1,1), glm::vec3(0,1,0)},     // top right      - 5
+		{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec2(0,0), glm::vec3(0,1,0)},     // bottom left    - 6
+		{glm::vec3(0.5f, -0.5f, -0.5f),  glm::vec2(1,0), glm::vec3(0,1,0)}      // bottom right   - 7
 	};
-	/*
-	glm::vec3(0,0,0),
-	glm::vec3(0,0,0),
-	glm::vec3(0,0,0),
-	glm::vec3(0,0,0),
-	glm::vec3(0,0,0),
-	glm::vec3(0,0,0),
-	glm::vec3(0,0,0),
-	glm::vec3(0,0,0)
-	*/
+
 	std::vector<Vertex> sunVertex =
 	{
 		{glm::vec3(0.95f, 0.95f, 0.75f), glm::vec2(0,0), glm::vec3(0,0,1)},	    // 1
@@ -85,8 +82,8 @@ int main()
 	};
 	int indexNumber = 6;
 	std::vector<int> indexBuffer{
-		0, 1, 2,
-		1, 3, 2
+		2, 3, 6,
+		3, 7, 6
 		/*4, 6, 5,
 		5, 6, 7,
 		0, 2, 4,
@@ -99,8 +96,8 @@ int main()
 		3, 7, 6,*/
 	};
 	///create and load MESH
-	glm::mat4 model = glm::mat4(1.0f);
-	swoleBear.load("..\\models\\swoleBear.obj");
+
+	bunBun.load("..\\models\\Bunny.obj");
 	
 	/*----------------------send info to the GPU-------------------*/
 	theMesh.meshSetUp(corners,indexBuffer);
@@ -109,26 +106,20 @@ int main()
 
 	uint texture;
 	int width, height, n;
-<<<<<<< Updated upstream
 	//finds the image
 	unsigned char* data = stbi_load("..\\images\\Shrek.png", &width, &height, &n, 0);
-=======
->>>>>>> Stashed changes
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	unsigned char* data = stbi_load("..\\images\\Shrek.png", &width, &height, &n, 0);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // GL_LINEAR SAMPLES texels
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // GL_NEARESTS RETURNS just closest pixel
-<<<<<<< Updated upstream
 	//sets the textures to mirrored repeat
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 	//clears up memory
-=======
->>>>>>> Stashed changes
+
 	stbi_image_free(data);
 
 	uint texture2;
@@ -154,7 +145,7 @@ int main()
 
 
 
-
+	glm::mat4 model = glm::mat4(1.0f);
 	glPolygonMode(GL_BACK, GL_FILL);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	///----------GAME LOOP----------///
@@ -164,67 +155,80 @@ int main()
 	glfwSetCursorPos(window, 1280 * 0.5, 720 * 0.5);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(1.0f,1.0f,1.0f,1.0f);
+	glClearColor(0,0.5f,0,1.0f);
+	//------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------
+	float time = 0;
+	bool up = true;
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//manually creates delta time
 		currentFrame = float(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-	
-	   glm::vec4 color = glm::vec4(theLight.getColour(),1.0f);
+		
+		
+		if (time < -1000)
+		{
+			up = true;
+	    }
+		else if (time > 1000)
+		{
+			up = false;
+		}
+		if (up)
+			time += deltaTime;
+		else if (!up)
+			time -= deltaTime;
 
-	   auto uniformLocation = glGetUniformLocation(shaders.getShaderID(), "objectColor");
-	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.75f, 0.0f, 0.75f)));
-	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "lightColor");
-	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(1.0f)));
+	   model = glm::mat4(1.0f);
+	   theLight.direction = glm::normalize(glm::vec3(glm::cos(time*2), glm::sin(time*2), 0));
+	   
+	   glm::vec4 color = glm::vec4(sun.getColour(),1.0f);
+
+	   auto uniformLocation = glGetUniformLocation(shaders.getShaderID(), "lightDirection");
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theLight.direction));
 
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "projection_view_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(theFlyingCamera.getProjectionView()));
 
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "model_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
-	   //sets the colour for the polygons drawn
-	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "color");
-	   glUniform4fv(uniformLocation, 1, glm::value_ptr(color));
+
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "normalMatrix");
-	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(glm::inverseTranspose(model)));
+	   glUniformMatrix3fv(uniformLocation, 1, false, glm::value_ptr(glm::inverseTranspose(model)));
+
+	   ////sets the colour for the polygons drawn
+	   //uniformLocation = glGetUniformLocation(shaders.getShaderID(), "color");
+	   //glUniform4fv(uniformLocation, 1, glm::value_ptr(color));
+
 
 	   theFlyingCamera.update(deltaTime);
-	   
-	 
 	   glUseProgram(shaders.getShaderID());
+
 	   //rotates the object
 	   //model = glm::rotate(model, 0.016f, glm::vec3(0, 10, 0));
-
-	  //for colour changing properties
-		if (glfwGetKey(window,GLFW_KEY_SPACE) == GLFW_PRESS)
-
-		{
-			theLight.setColour(glm::vec3(0.0f, 1.0f, 0.5f));
-			//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
-		}
-	   //--------------------END COLOUR CHANGING PROPERTIES-------------------------
-
-
 
 	   glBindTexture(GL_TEXTURE_2D, texture); // sets the texture to draw
 	   theMesh.drawCube(indexNumber);// draws with texture set above
 	   glBindTexture(GL_TEXTURE_2D, texture2);//sets new texture to draw
-	   swoleBear.draw(false);//draws with new texture
+	   bunBun.draw(false);//draws with new texture
 	   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	   glPolygonMode(GL_BACK, GL_FILL);
-	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "objectColor");
-	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, 0.5f)));
+	   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	   sun.drawLight(36);
 	   
+	   std::cout << time << "\n";
 	   glfwSwapBuffers(window);
-		glfwPollEvents();
+	   glfwPollEvents();
 	}
-
+	//------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------
 	theMesh.~mesh();
-	swoleBear.~OBJMesh();
+	bunBun.~OBJMesh();
 	glDeleteTextures(1, &texture);
 	glDeleteTextures(1, &texture2);
 	glfwDestroyWindow(window);

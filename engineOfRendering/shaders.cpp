@@ -64,11 +64,6 @@ void shaders::linkShaderProgram()
 	//link both programs
 	glLinkProgram(shaderProgramID);
 
-	//check compile status
-	GLint logLength = 0;
-	glGetProgramiv(shaderProgramID, GL_INFO_LOG_LENGTH, &logLength);
-	char* log = new char[logLength];
-
 	GLint success = 0;
 	glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &success);
 	if (!success)
