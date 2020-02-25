@@ -61,26 +61,26 @@ int main()
 	//mesh data
 	std::vector<Vertex> corners =
 	{ //            ---position---        ---UV---         ---Normal---
-		{glm::vec3(-0.5f, 0.5f, 0.5f),	 glm::vec2(0,0), glm::vec3(0,1,0)},     // top left       - 0
-		{glm::vec3(0.5f, 0.5f, 0.5f),	 glm::vec2(1,0), glm::vec3(0,1,0)},     // top right      - 1
-		{glm::vec3(-0.5f, -0.5f, 0.5f),  glm::vec2(0,1), glm::vec3(0,1,0)},     // bottom left    - 2
-		{glm::vec3(0.5f, -0.5f, 0.5f) ,  glm::vec2(1,1), glm::vec3(0,1,0)},     // bottom right   - 3 
-		{glm::vec3(-0.5f, 0.5f, -0.5f),  glm::vec2(0,1), glm::vec3(0,1,0)},     // top left       - 4
-		{glm::vec3(0.5f, 0.5f, -0.5f),   glm::vec2(1,1), glm::vec3(0,1,0)},     // top right      - 5
-		{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec2(0,0), glm::vec3(0,1,0)},     // bottom left    - 6
-		{glm::vec3(0.5f, -0.5f, -0.5f),  glm::vec2(1,0), glm::vec3(0,1,0)}      // bottom right   - 7
+		{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec3(0,1,0), glm::vec2(0,0) },		// top left       - 0
+		{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec3(0,1,0), glm::vec2(1,0) },		// top right      - 1
+		{glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0,1,0), glm::vec2(0,1) },		// bottom left    - 2
+		{glm::vec3(0.5f, -0.5f, 0.5f) , glm::vec3(0,1,0), glm::vec2(1,1) },		// bottom right   - 3 
+		{glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0,1,0), glm::vec2(0,1) },		// top left       - 4
+		{glm::vec3(0.5f, 0.5f, -0.5f),  glm::vec3(0,1,0), glm::vec2(1,1) },		// top right      - 5
+		{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec3(0,1,0), glm::vec2(0,0) },		// bottom left    - 6
+		{glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0,1,0), glm::vec2(1,0) }		// bottom right   - 7
 	};
 
 	std::vector<Vertex> sunVertex =
 	{
-		{glm::vec3(0.95f, 0.95f, 0.75f), glm::vec2(0,0), glm::vec3(0,0,1)},	    // 1
-		{glm::vec3(0.75f, 0.95f, 0.75f), glm::vec2(0,0), glm::vec3(0,0,1)},     // 0
-		{glm::vec3(0.75f, 0.75f, 0.75f), glm::vec2(0,0), glm::vec3(0,0,1)},	    // 2
-		{glm::vec3(0.95f, 0.75f, 0.75f), glm::vec2(0,0), glm::vec3(0,0,1)},	    // 3 
-		{glm::vec3(0.75f, 0.95f, 0.5f),	 glm::vec2(0,0), glm::vec3(0,0,1)},	    // 4
-		{glm::vec3(0.95f, 0.95f, 0.5f),	 glm::vec2(0,0), glm::vec3(0,0,1)},	    // 5
-		{glm::vec3(0.75f, 0.75f, 0.5f),	 glm::vec2(0,0), glm::vec3(0,0,1)},	    // 6
-		{glm::vec3(0.95f, 0.75f, 0.5f),	 glm::vec2(0,0), glm::vec3(0,0,1)}      // 7 
+		{glm::vec3(0.95f, 0.95f, 0.75f),glm::vec3(0,0,1), glm::vec2(0,0)},		// 1
+		{glm::vec3(0.75f, 0.95f, 0.75f),glm::vec3(0,0,1), glm::vec2(0,0)},		// 0
+		{glm::vec3(0.75f, 0.75f, 0.75f),glm::vec3(0,0,1), glm::vec2(0,0)},		// 2
+		{glm::vec3(0.95f, 0.75f, 0.75f),glm::vec3(0,0,1), glm::vec2(0,0)},		// 3 
+		{glm::vec3(0.75f, 0.95f, 0.5f),	glm::vec3(0,0,1), glm::vec2(0,0)},		// 4
+		{glm::vec3(0.95f, 0.95f, 0.5f),	glm::vec3(0,0,1), glm::vec2(0,0)},		// 5
+		{glm::vec3(0.75f, 0.75f, 0.5f),	glm::vec3(0,0,1), glm::vec2(0,0)},		// 6
+		{glm::vec3(0.95f, 0.75f, 0.5f),	glm::vec3(0,0,1), glm::vec2(0,0)}		// 7 
 	};
 	int indexNumber = 6;
 	std::vector<int> indexBuffer{
@@ -147,7 +147,6 @@ int main()
 
 
 	glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 inverse = glm::mat4(1.0f);
 	glPolygonMode(GL_BACK, GL_FILL);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	///----------GAME LOOP----------///
@@ -157,10 +156,12 @@ int main()
 	glfwSetCursorPos(window, 1280 * 0.5, 720 * 0.5);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(0,0.5f,0,1.0f);
+	glClearColor(0,0,0.5f,1.0f);
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
+	theLight.diffuse = glm::vec3(1, 1, 0);
+	theLight.specular = glm::vec3(1, 1, 0);
 	glm::vec3 ambientLight = {0.25f,0.25f,0.25f};
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
@@ -190,9 +191,22 @@ int main()
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "normalMatrix");
 	   glUniformMatrix3fv(uniformLocation, 1, false, glm::value_ptr(glm::inverseTranspose(glm::mat3(model))));
 
-	   ////sets the colour for the polygons drawn
-	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "color");
-	   glUniform4fv(uniformLocation, 1, glm::value_ptr(color));
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "ambientLight");
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(ambientLight));
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "diffuseLight");
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theLight.diffuse));
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "specularLight");
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theLight.specular));
+	   //material colours 
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "Ka");//material ambience
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.0f)));
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "Kd");//material diffuse
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.4f)));
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "Ks");//material specular
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.0f)));
+
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "cameraPosition");
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theFlyingCamera.getPosition()));
 
 
 	   theFlyingCamera.update(deltaTime);
@@ -204,12 +218,12 @@ int main()
 	   glBindTexture(GL_TEXTURE_2D, texture); // sets the texture to draw
 	   theMesh.drawCube(indexNumber);// draws with texture set above
 	   glBindTexture(GL_TEXTURE_2D, texture2);//sets new texture to draw
-	   //bunBun.draw(false);//draws with new texture
+	   bunBun.draw(false);//draws with new texture
 	   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	   sun.drawLight(36);
 	   
-	   std::cout << time << "\n";
+	   
 	   glfwSwapBuffers(window);
 	   glfwPollEvents();
 	}

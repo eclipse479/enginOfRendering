@@ -68,4 +68,10 @@ void flyingCamera::update(float deltaTime)
 			// Update PxV
 			updateProjectionViewTransform();
 		}
+
+}
+
+glm::vec3 flyingCamera::getPosition()
+{
+	return glm::vec3(getWorldTransform()[3]);
 }

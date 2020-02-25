@@ -16,7 +16,7 @@ void mesh::meshSetUp(std::vector<Vertex> Vertecies, std::vector<int> indexBuffer
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, /*number or vertecies used*/ Vertecies.size() * sizeof(Vertex) , &Vertecies[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, Vertecies.size() * sizeof(Vertex) , &Vertecies[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.size() * sizeof(int), &indexBuffer[0], GL_STATIC_DRAW);
@@ -25,13 +25,13 @@ void mesh::meshSetUp(std::vector<Vertex> Vertecies, std::vector<int> indexBuffer
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 
+	//enable second element as normal
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(3 * sizeof(float)));
+
 	// UV
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3* sizeof(float)));
-
-	//enable third element as normal
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(5 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6* sizeof(float)));
 
 
 	glBindVertexArray(0);

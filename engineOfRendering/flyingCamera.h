@@ -7,6 +7,7 @@ class flyingCamera :	public camera
 public:
 	void update(float deltaTime);
 	void setSpeed(float newSpeed);
+	glm::vec3 getPosition();
 private:
 
 	float speed = 10.0f;

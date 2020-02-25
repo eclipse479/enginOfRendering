@@ -1,7 +1,8 @@
 #version 450
 layout(location = 0) in vec3 local_position;
-layout(location = 1) in vec2 texture_coordinates;
-layout(location = 2) in vec3 normal;
+layout(location = 1) in vec3 normal;
+layout(location = 2) in vec2 texture_coordinates;
+
 
 //out vec2 final_texture_coodinates;
 out vec3 vNormal;

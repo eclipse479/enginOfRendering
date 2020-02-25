@@ -2,6 +2,14 @@
 
 uniform sampler2D diffuse_texture;
 uniform vec3 lightDirection;
+uniform vec3 ambientLight;
+uniform vec3 diffuseLight;
+uniform vec3 specularLight;
+
+uniform vec3 Ka;
+uniform vec3 Kd;
+uniform vec3 Ks;
+uniform float specularPower;
 //in vec2 final_texture_coodinates;
 in vec3 vNormal;
 
@@ -15,5 +23,7 @@ void main()
 	
 	float lambertTerm = max(0,min(1,dot(N,-L)));
     //final_color = texture(diffuse_texture, final_texture_coodinates); //	FOR TEXTURE
-	final_color = vec4(lambertTerm,lambertTerm,lambertTerm, 1.0);
+	vec3 ambient = ambientLight * Ka;
+	vec3 diffuse = (diffuseLight * Kd * lambertTerm);
+	final_color = vec4(ambient + diffuse, 1.0);
 }
