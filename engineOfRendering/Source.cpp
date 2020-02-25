@@ -99,7 +99,7 @@ int main()
 	};
 	///create and load MESH
 
-	bunBun.load("..\\models\\Bunny.obj");
+	bunBun.load("..\\models\\Dragon.obj");
 	
 	/*----------------------send info to the GPU-------------------*/
 	theMesh.meshSetUp(corners,indexBuffer);
@@ -126,7 +126,7 @@ int main()
 	uint texture2;
 	int width2, height2, n2;
 	//finds the image
-	unsigned char* data2 = stbi_load("..\\images\\Bear_Blue_Base_Color.png", &width2, &height2, &n2, 0);
+	unsigned char* data2 = stbi_load("..\\images\\flower.jpg", &width2, &height2, &n2, 0);
 	glGenTextures(1, &texture2);
 	glBindTexture(GL_TEXTURE_2D, texture2);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
@@ -156,12 +156,12 @@ int main()
 	glfwSetCursorPos(window, 1280 * 0.5, 720 * 0.5);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(0,0,0.5f,1.0f);
+	glClearColor(0,0,0.5f,1);
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
-	theLight.diffuse = glm::vec3(1, 1, 0);
-	theLight.specular = glm::vec3(1, 1, 0);
+	theLight.diffuse = glm::vec3(1, 0, 0);
+	theLight.specular = glm::vec3(0, 0, 1);
 	glm::vec3 ambientLight = {0.25f,0.25f,0.25f};
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
@@ -199,19 +199,23 @@ int main()
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theLight.specular));
 	   //material colours 
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "Ka");//material ambience
-	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.0f)));
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.4f)));
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "Kd");//material diffuse
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.4f)));
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "Ks");//material specular
-	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.0f)));
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.4f)));
 
+	   glm::vec3 position = theFlyingCamera.getPosition();
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "cameraPosition");
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theFlyingCamera.getPosition()));
 
-	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "specularPower");
-	   float specularPower = 100.0f;
-	   glUniform1fv(uniformLocation, 1, (GLfloat*)&specularPower);
-
+	  // uniformLocation = glGetUniformLocation(shaders.getShaderID(), "specularPower");
+	  // float specularPower = 100.0f;
+	  // glUniform1fv(uniformLocation, 1, (GLfloat*)&specularPower);
+	   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	   {
+		   std::cout << "PAUSE!";
+	   }
 
 
 	   theFlyingCamera.update(deltaTime);
