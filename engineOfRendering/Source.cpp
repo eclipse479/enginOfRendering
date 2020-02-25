@@ -37,7 +37,7 @@ int main()
 	flyingCamera theFlyingCamera;
 	shaders shaders;
 	lightSource sun;
-	aie::OBJMesh bunBun;
+	aie::OBJMesh dragon;
 	light theLight;
 	if (window == nullptr)
 	{
@@ -99,7 +99,7 @@ int main()
 	};
 	///create and load MESH
 
-	bunBun.load("..\\models\\Dragon.obj");
+	dragon.load("..\\models\\Dragon.obj");
 	
 	/*----------------------send info to the GPU-------------------*/
 	theMesh.meshSetUp(corners,indexBuffer);
@@ -161,7 +161,7 @@ int main()
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
 	theLight.diffuse = glm::vec3(1, 0, 0);
-	theLight.specular = glm::vec3(0, 0, 1);
+	theLight.specular = glm::vec3(1, 1, 1);
 	glm::vec3 ambientLight = {0.25f,0.25f,0.25f};
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
@@ -180,7 +180,7 @@ int main()
 	   glm::vec4 color = glm::vec4(sun.getColour(),1.0f);
 
 	   auto uniformLocation = glGetUniformLocation(shaders.getShaderID(), "lightDirection");
-	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theLight.direction));
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(-0.39f,-0.91,0)/*theLight.direction*/));
 
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "projection_view_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(theFlyingCamera.getProjectionView()));
@@ -224,10 +224,10 @@ int main()
 	   //rotates the object
 	   //model = glm::rotate(model, 0.016f, glm::vec3(0, 10, 0));
 
-	   glBindTexture(GL_TEXTURE_2D, texture); // sets the texture to draw
+	   glBindTexture(GL_TEXTURE_2D, texture2); // sets the texture to draw
 	   theMesh.drawCube(indexNumber);// draws with texture set above
-	   glBindTexture(GL_TEXTURE_2D, texture2);//sets new texture to draw
-	   bunBun.draw(false);//draws with new texture
+	   glBindTexture(GL_TEXTURE_2D, texture);//sets new texture to draw
+	   dragon.draw(false);//draws with new texture
 	   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	   sun.drawLight(36);
@@ -240,7 +240,7 @@ int main()
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
 	theMesh.~mesh();
-	bunBun.~OBJMesh();
+	dragon.~OBJMesh();
 	glDeleteTextures(1, &texture);
 	glDeleteTextures(1, &texture2);
 	glfwDestroyWindow(window);

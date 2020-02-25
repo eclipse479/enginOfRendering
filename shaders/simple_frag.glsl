@@ -30,9 +30,11 @@ void main()
 	vec3 R = reflect( L, N ); // FOR LIGHTING
 	// calculate specular term
 	float specularTerm = pow( max( 0, dot( R, V ) ), specularPower ); 	// FOR LIGHTING
-    
+	
+    vec4 textureColour = texture(diffuse_texture, final_texture_coodinates);
+	vec3 colourToAdd = vec3 (textureColour.x,textureColour.y,textureColour.z);
 	vec3 ambient = ambientLight * Ka; 									// FOR LIGHTING
-	vec3 diffuse = (diffuseLight * Kd * lambertTerm); 					// FOR LIGHTING
+	vec3 diffuse = (diffuseLight * Kd * lambertTerm * colourToAdd); 	// FOR LIGHTING
 	vec3 specular = specularLight * Ks * specularTerm; 					// FOR LIGHTING
 	//final_color = texture(diffuse_texture, final_texture_coodinates); // FOR TEXTURE
 	final_color = vec4(ambient + diffuse + specular, 1.0); 				// FOR LIGHTING
