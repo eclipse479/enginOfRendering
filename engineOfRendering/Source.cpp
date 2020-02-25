@@ -21,6 +21,8 @@ using uint = unsigned int;
 struct light
 {
 	glm::vec3 direction;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
 };
 
 int main()
@@ -112,7 +114,6 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	
-
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // GL_LINEAR SAMPLES texels
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // GL_NEARESTS RETURNS just closest pixel
 	//sets the textures to mirrored repeat
@@ -146,6 +147,7 @@ int main()
 
 
 	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 inverse = glm::mat4(1.0f);
 	glPolygonMode(GL_BACK, GL_FILL);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	///----------GAME LOOP----------///
@@ -159,8 +161,7 @@ int main()
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
-	float time = 0;
-	bool up = true;
+	glm::vec3 ambientLight = {0.25f,0.25f,0.25f};
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
 
@@ -170,19 +171,7 @@ int main()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		
-		
-		if (time < -1000)
-		{
-			up = true;
-	    }
-		else if (time > 1000)
-		{
-			up = false;
-		}
-		if (up)
-			time += deltaTime;
-		else if (!up)
-			time -= deltaTime;
+	   float time = glfwGetTime();
 
 	   model = glm::mat4(1.0f);
 	   theLight.direction = glm::normalize(glm::vec3(glm::cos(time*2), glm::sin(time*2), 0));
@@ -197,13 +186,13 @@ int main()
 
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "model_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
-
+	  
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "normalMatrix");
-	   glUniformMatrix3fv(uniformLocation, 1, false, glm::value_ptr(glm::inverseTranspose(model)));
+	   glUniformMatrix3fv(uniformLocation, 1, false, glm::value_ptr(glm::inverseTranspose(glm::mat3(model))));
 
 	   ////sets the colour for the polygons drawn
-	   //uniformLocation = glGetUniformLocation(shaders.getShaderID(), "color");
-	   //glUniform4fv(uniformLocation, 1, glm::value_ptr(color));
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "color");
+	   glUniform4fv(uniformLocation, 1, glm::value_ptr(color));
 
 
 	   theFlyingCamera.update(deltaTime);
@@ -215,7 +204,7 @@ int main()
 	   glBindTexture(GL_TEXTURE_2D, texture); // sets the texture to draw
 	   theMesh.drawCube(indexNumber);// draws with texture set above
 	   glBindTexture(GL_TEXTURE_2D, texture2);//sets new texture to draw
-	   bunBun.draw(false);//draws with new texture
+	   //bunBun.draw(false);//draws with new texture
 	   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	   sun.drawLight(36);

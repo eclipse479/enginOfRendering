@@ -2,7 +2,6 @@
 
 uniform sampler2D diffuse_texture;
 uniform vec3 lightDirection;
-
 //in vec2 final_texture_coodinates;
 in vec3 vNormal;
 
