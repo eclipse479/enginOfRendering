@@ -208,6 +208,11 @@ int main()
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "cameraPosition");
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theFlyingCamera.getPosition()));
 
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "specularPower");
+	   float specularPower = 100.0f;
+	   glUniform1fv(uniformLocation, 1, (GLfloat*)&specularPower);
+
+
 
 	   theFlyingCamera.update(deltaTime);
 	   glUseProgram(shaders.getShaderID());

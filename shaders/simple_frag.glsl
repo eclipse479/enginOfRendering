@@ -10,7 +10,10 @@ uniform vec3 Ka;
 uniform vec3 Kd;
 uniform vec3 Ks;
 uniform float specularPower;
+
+uniform vec3 cameraPosition;
 //in vec2 final_texture_coodinates;
+in vec4 vPosition;
 in vec3 vNormal;
 
 out vec4 final_color;
@@ -22,8 +25,14 @@ void main()
 	vec3 L = normalize(lightDirection);
 	
 	float lambertTerm = max(0,min(1,dot(N,-L)));
+	
+	vec3 V = normalize(cameraPosition - vPosition.xyz);
+	vec3 R = reflect( L, N );
+	// calculate specular term
+	float specularTerm = pow( max( 0, dot( R, V ) ), specularPower );
     //final_color = texture(diffuse_texture, final_texture_coodinates); //	FOR TEXTURE
 	vec3 ambient = ambientLight * Ka;
 	vec3 diffuse = (diffuseLight * Kd * lambertTerm);
-	final_color = vec4(ambient + diffuse, 1.0);
+	vec3 specular = specularLight * Ks * specularTerm;
+	final_color = vec4(ambient + diffuse + specular, 1.0);
 }
