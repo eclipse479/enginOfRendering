@@ -47,24 +47,26 @@ void main()
 	N = TBN * ((texNormal * 2) - 1);
 
 	
-	float lambertTerm = max(0,min(1,dot(N,-L))); 	// FOR LIGHTING
+	float lambertTerm =    max(0,min(1,dot(N,-L))); 	// FOR LIGHTING
 	float lambertTermSun = max(0,min(1,dot(N,-sunL)));	// FOR SECOND LIGHT
 	
 	vec3 V = normalize(cameraPosition - vPosition.xyz); 				// FOR LIGHTING
-	vec3 R = reflect( L, N ); 		// FOR LIGHTING
-	vec3 sunR = reflect(sunL,N);	// FOR SECOND LIGHT
-	// calculate specular term
+	vec3 R = reflect( L, N ); 											// FOR LIGHTING
+	vec3 sunR = reflect(sunL,N);										// FOR SECOND LIGHT
+				// calculate specular term
 	float specularTerm = pow( max( 0, dot( R, V ) ), specularPower ); 	// FOR LIGHTING
+	float specularTermSun = pow( max( 0, dot( sunR, V ) ), specularPower ); 	// FOR SECOND LIGHT
 	
     vec4 textureColour = texture(textureDiffuse, final_texture_coodinates);
 	vec3 colourToAdd = vec3 (textureColour.x,textureColour.y,textureColour.z);
-	vec3 ambient = ambientLight * Ka * colourToAdd; 									// FOR LIGHTING
-	vec3 diffuse = (diffuseLight * Kd * lambertTerm * colourToAdd); 					// FOR LIGHTING
-	vec3 specular = specularLight * Ks * specularTerm; 									// FOR LIGHTING
+	
+	vec3 ambient = ambientLight * Ka * colourToAdd; 											// FOR LIGHTING
+	vec3 diffuse = (diffuseLight * Kd * lambertTerm * colourToAdd); 							// FOR LIGHTING
+	vec3 specular = specularLight * Ks * specularTerm; 											// FOR LIGHTING
 	
 	vec3 sunAmbient = ambientLightSun * Ka * colourToAdd; 										// FOR SECOND LIGHT
 	vec3 sunDiffuse = (diffuseLightSun * Kd * lambertTermSun * colourToAdd); 					// FOR SECOND LIGHT
-	vec3 sunSpecular = specularLightSun * Ks * specularTerm; 									// FOR SECOND LIGHT
+	vec3 sunSpecular = specularLightSun * Ks * specularTermSun; 								// FOR SECOND LIGHT
 	
 	//final_color = texture(textureDiffuse, final_texture_coodinates); // FOR TEXTURE
 	final_color = vec4((ambient + diffuse + specular) + (sunAmbient + sunDiffuse + sunSpecular), 1.0); 				// FOR LIGHTING

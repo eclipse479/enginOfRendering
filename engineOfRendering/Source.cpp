@@ -161,11 +161,11 @@ int main()
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
-	theLight.diffuse = glm::vec3(0, 0, 0);
-	theLight.specular = glm::vec3(.75f, .75f, .75f);
-	theSun.diffuse = glm::vec3(0, 1, 0);
-	theSun.specular = glm::vec3(.75f, .75f, .75f);
-	glm::vec3 ambientLight = {0.55f,0.55f,0.85f};
+	theLight.diffuse = glm::vec3(0.75f, 0, 0);
+	theLight.specular = glm::vec3(1, 0, 0);
+	theSun.diffuse = glm::vec3(0, 0, 0.75f);
+	theSun.specular = glm::vec3(0, 0, 1);
+	glm::vec3 ambientLight = {0.5f,0.5f,0.5f};
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
 
