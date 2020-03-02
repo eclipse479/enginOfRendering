@@ -36,7 +36,7 @@ int main()
 	flyingCamera theFlyingCamera;
 	shaders shaders;
 	aie::OBJMesh swoleBear;
-	aie::OBJMesh bunBun;
+	aie::OBJMesh doll ;
 	light theLight;
 	light theSun;
 	if (window == nullptr)
@@ -100,7 +100,7 @@ int main()
 	///create and load MESH
 
 	swoleBear.load("..\\models\\swoleBear.obj");
-	bunBun.load("..\\models\\Bunny.obj");
+	doll.load("..\\models\\EnemyRussianDoll.obj");
 	
 	/*----------------------send info to the GPU-------------------*/
 	theMesh.meshSetUp(corners,indexBuffer);
@@ -110,7 +110,7 @@ int main()
 	uint texture;
 	int width, height, n;
 	//finds the image
-	unsigned char* data = stbi_load("..\\images\\blueBear.png", &width, &height, &n, 0);
+	unsigned char* data = stbi_load("..\\images\\redBear.png", &width, &height, &n, 0);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -127,7 +127,7 @@ int main()
 	uint texture2;
 	int width2, height2, n2;
 	//finds the image
-	unsigned char* data2 = stbi_load("..\\images\\flower.jpg", &width2, &height2, &n2, 0);
+	unsigned char* data2 = stbi_load("..\\images\\Shrek.png", &width2, &height2, &n2, 0);
 	glGenTextures(1, &texture2);
 	glBindTexture(GL_TEXTURE_2D, texture2);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
@@ -236,15 +236,23 @@ int main()
 	   glUseProgram(shaders.getShaderID());
 
 	   //rotates the object
-	   //model = glm::rotate(model, 0.016f, glm::vec3(0, 10, 0));
 
 	   //glBindTexture(GL_TEXTURE_2D, texture2); // sets the texture to draw
 	   glBindTexture(GL_TEXTURE_2D, texture);//sets new texture to draw
-	   theMesh.drawCube(indexNumber);// draws with texture set above
+		 //move objects position
+	   model[3] = glm::vec4(0,0,0,1);
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "model_matrix");
+	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
 	   swoleBear.draw(false);//draws with new texture
-	   //bunBun.draw(false);//draws with new texture
+	   glBindTexture(GL_TEXTURE_2D, texture2);//sets new texture to draw
+	   model[3] = glm::vec4(0, 0, 8, 1);
+	   //move objects position
+	   model = glm::rotate(model, 0.016f, glm::vec3(0, 10, 0));
+	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
+	   theMesh.drawCube(indexNumber);// draws with texture set above
+	   doll.draw(false);//draws with new texture
 	   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	   glPolygonMode(GL_BACK, GL_LINE);
 	   
 	   
 	   glfwSwapBuffers(window);
@@ -255,7 +263,7 @@ int main()
 	//------------------------------------------------------------------------------------------------------------------------
 	theMesh.~mesh();
 	swoleBear.~OBJMesh();
-	bunBun.~OBJMesh();
+	doll.~OBJMesh();
 	glDeleteTextures(1, &texture);
 	glDeleteTextures(1, &texture2);
 	glfwDestroyWindow(window);

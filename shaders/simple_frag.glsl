@@ -68,6 +68,6 @@ void main()
 	vec3 sunDiffuse = (diffuseLightSun * Kd * lambertTermSun * colourToAdd); 					// FOR SECOND LIGHT
 	vec3 sunSpecular = specularLightSun * Ks * specularTermSun; 								// FOR SECOND LIGHT
 	
-	//final_color = texture(textureDiffuse, final_texture_coodinates); // FOR TEXTURE
+	
 	final_color = vec4((ambient + diffuse + specular) + (sunAmbient + sunDiffuse + sunSpecular), 1.0); 				// FOR LIGHTING
 }
