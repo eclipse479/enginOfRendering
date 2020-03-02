@@ -4,7 +4,7 @@
 
 camera::camera()
 {
-	this->setPerspective(90.0f * 3.141f / 180.0f, 16.0f / 9.0f, 0.1f, 5000.0f);
+	this->setPerspective(90.0f * 3.141f / 180.0f, 16.0f / 9.0f, 0.1f, 25000.0f);
 	this->setLookAt(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f, 10.0f, 0.0f));
 }
 

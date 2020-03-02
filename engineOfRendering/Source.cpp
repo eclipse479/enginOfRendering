@@ -100,7 +100,7 @@ int main()
 	///create and load MESH
 
 	swoleBear.load("..\\models\\swoleBear.obj");
-	doll.load("..\\models\\EnemyRussianDoll.obj");
+	doll.load("..\\models\\betterDoll.obj");
 	
 	/*----------------------send info to the GPU-------------------*/
 	theMesh.meshSetUp(corners,indexBuffer);
@@ -110,7 +110,7 @@ int main()
 	uint texture;
 	int width, height, n;
 	//finds the image
-	unsigned char* data = stbi_load("..\\images\\redBear.png", &width, &height, &n, 0);
+	unsigned char* data = stbi_load("..\\images\\yellowBear.png", &width, &height, &n, 0);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -123,11 +123,12 @@ int main()
 	//clears up memory
 
 	stbi_image_free(data);
-
+	
+	
 	uint texture2;
 	int width2, height2, n2;
 	//finds the image
-	unsigned char* data2 = stbi_load("..\\images\\Shrek.png", &width2, &height2, &n2, 0);
+	unsigned char* data2 = stbi_load("..\\images\\dollSkin.png", &width2, &height2, &n2, 0);
 	glGenTextures(1, &texture2);
 	glBindTexture(GL_TEXTURE_2D, texture2);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
@@ -177,7 +178,8 @@ int main()
 		
 	   float time = glfwGetTime();
 
-	   model = glm::mat4(1.0f);
+	   model = glm::rotate(model, 0.016f, glm::vec3(0, 1, 0));
+	   //model = glm::mat4(1.0f);
 	   theLight.direction = glm::normalize(glm::vec3(glm::cos(time*2), glm::sin(time*2), 0));
 	   theSun.direction = glm::normalize(glm::vec3(glm::cos(-time * 2), glm::sin(-time * 2), 0));
 	  
@@ -193,8 +195,7 @@ int main()
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "projection_view_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(theFlyingCamera.getProjectionView()));
 
-	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "model_matrix");
-	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
+
 	  
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "normalMatrix");
 	   glUniformMatrix3fv(uniformLocation, 1, false, glm::value_ptr(glm::inverseTranspose(glm::mat3(model))));
@@ -226,6 +227,10 @@ int main()
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "specularLightSun");
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theSun.specular));
 
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "model_matrix");
+	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
+
+
 	   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	   {
 		   std::cout << "PAUSE!";
@@ -241,13 +246,12 @@ int main()
 	   glBindTexture(GL_TEXTURE_2D, texture);//sets new texture to draw
 		 //move objects position
 	   model[3] = glm::vec4(0,0,0,1);
-	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "model_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
 	   swoleBear.draw(false);//draws with new texture
+
 	   glBindTexture(GL_TEXTURE_2D, texture2);//sets new texture to draw
 	   model[3] = glm::vec4(0, 0, 8, 1);
 	   //move objects position
-	   model = glm::rotate(model, 0.016f, glm::vec3(0, 10, 0));
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
 	   theMesh.drawCube(indexNumber);// draws with texture set above
 	   doll.draw(false);//draws with new texture
