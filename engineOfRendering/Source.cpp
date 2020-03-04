@@ -12,6 +12,7 @@
 #include "flyingCamera.h"
 #include "mesh.h"
 #include "shaders.h"
+#include "texture.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -39,12 +40,16 @@ int main()
 	aie::OBJMesh doll ;
 	light theLight;
 	light theSun;
+
+	texture swoleBearSkin;
+	texture dollSkin;
+	
 	if (window == nullptr)
 	{
 		glfwTerminate();
 		return -2;
 	}
-
+	//create the window
 	glfwMakeContextCurrent(window);
 	//code goes here
 	if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
@@ -71,17 +76,6 @@ int main()
 		{glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0,1,0), glm::vec2(1,0) }		// bottom right   - 7
 	};
 
-	std::vector<Vertex> sunVertex =
-	{
-		{glm::vec3(0.95f, 0.95f, 0.75f),glm::vec3(0,0,1), glm::vec2(0,0)},		// 1
-		{glm::vec3(0.75f, 0.95f, 0.75f),glm::vec3(0,0,1), glm::vec2(0,0)},		// 0
-		{glm::vec3(0.75f, 0.75f, 0.75f),glm::vec3(0,0,1), glm::vec2(0,0)},		// 2
-		{glm::vec3(0.95f, 0.75f, 0.75f),glm::vec3(0,0,1), glm::vec2(0,0)},		// 3 
-		{glm::vec3(0.75f, 0.95f, 0.5f),	glm::vec3(0,0,1), glm::vec2(0,0)},		// 4
-		{glm::vec3(0.95f, 0.95f, 0.5f),	glm::vec3(0,0,1), glm::vec2(0,0)},		// 5
-		{glm::vec3(0.75f, 0.75f, 0.5f),	glm::vec3(0,0,1), glm::vec2(0,0)},		// 6
-		{glm::vec3(0.95f, 0.75f, 0.5f),	glm::vec3(0,0,1), glm::vec2(0,0)}		// 7 
-	};
 	int indexNumber = 6;
 	std::vector<int> indexBuffer{
 		2, 3, 6,
@@ -97,89 +91,64 @@ int main()
 		2, 3, 6,
 		3, 7, 6,*/
 	};
+	
 	///create and load MESH
-
 	swoleBear.load("..\\models\\swoleBear.obj");
 	doll.load("..\\models\\betterDoll.obj");
 	
 	/*----------------------send info to the GPU-------------------*/
+	//loads the square
 	theMesh.meshSetUp(corners,indexBuffer);
 
-    
-
-	uint texture;
-	int width, height, n;
-	//finds the image
-	unsigned char* data = stbi_load("..\\images\\yellowBear.png", &width, &height, &n, 0);
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    //binds the textures
+	swoleBearSkin.bind("..\\images\\yellowBear.png");
+	dollSkin.bind("..\\images\\dollSkin.png");
 	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // GL_LINEAR SAMPLES texels
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // GL_NEARESTS RETURNS just closest pixel
-	//sets the textures to mirrored repeat
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	//clears up memory
-
-	stbi_image_free(data);
-	
-	
-	uint texture2;
-	int width2, height2, n2;
-	//finds the image
-	unsigned char* data2 = stbi_load("..\\images\\dollSkin.png", &width2, &height2, &n2, 0);
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
-
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // GL_LINEAR SAMPLES texels
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // GL_NEARESTS RETURNS just closest pixel
-	//clears up memory
-	stbi_image_free(	data2);
-
 	//constructs the shaders
 	shaders.createVertexShader("..\\shaders\\simple_vertex.glsl");
 
 	shaders.createFragmentShader("..\\shaders\\simple_frag.glsl");
-	
+	//link the two shaders together
 	shaders.linkShaderProgram();
 
 
-
+	//set the model matrix
 	glm::mat4 model = glm::mat4(1.0f);
-	glPolygonMode(GL_BACK, GL_FILL);
+
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	///----------GAME LOOP----------///
 	float currentFrame = 0;
 	float lastFrame = 0;
 	float deltaTime = 0;
-	glfwSetCursorPos(window, 1280 * 0.5, 720 * 0.5);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glEnable(GL_DEPTH_TEST);
+
+	glfwSetCursorPos(window, 1280 * 0.5, 720 * 0.5);// moves the cursor to the center of the window
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // turns the cursor off
+	glEnable(GL_DEPTH_TEST);// turns on depth test
 	glClearColor(0,0,0.2f,1);
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
+	//light # 1
 	theLight.diffuse = glm::vec3(0.75f, 0, 0);
 	theLight.specular = glm::vec3(1, 0, 0);
+	//light # 2
 	theSun.diffuse = glm::vec3(0, 0, 0.75f);
 	theSun.specular = glm::vec3(0, 0, 1);
+	//global ambient light(no direct lighting)
 	glm::vec3 ambientLight = {0.5f,0.5f,0.5f};
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//manually creates delta time
+		//----- manually creates delta time -----
 		currentFrame = float(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		
-	   float time = glfwGetTime();
+		//----------------------------------------
 
+	   //rotates the world
 	   model = glm::rotate(model, 0.016f, glm::vec3(0, 1, 0));
-	   //model = glm::mat4(1.0f);
+	   //changes the light direction based on the current time
+	   float time = glfwGetTime();
 	   theLight.direction = glm::normalize(glm::vec3(glm::cos(time*2), glm::sin(time*2), 0));
 	   theSun.direction = glm::normalize(glm::vec3(glm::cos(-time * 2), glm::sin(-time * 2), 0));
 	  
@@ -187,16 +156,14 @@ int main()
 	   //auto uniformLocation = glGetUniformLocation(shaders.getShaderID(), "lightDirection");
 	   //glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(.43f,.92f,0)));
 	   //moving light
+
+	   //---------------sets the uniforms in the shader programs---------------
 	   auto uniformLocation = glGetUniformLocation(shaders.getShaderID(), "lightDirection");
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theLight.direction));
-
-	   
 
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "projection_view_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(theFlyingCamera.getProjectionView()));
 
-
-	  
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "normalMatrix");
 	   glUniformMatrix3fv(uniformLocation, 1, false, glm::value_ptr(glm::inverseTranspose(glm::mat3(model))));
 
@@ -243,13 +210,13 @@ int main()
 	   //rotates the object
 
 	   //glBindTexture(GL_TEXTURE_2D, texture2); // sets the texture to draw
-	   glBindTexture(GL_TEXTURE_2D, texture);//sets new texture to draw
+	   swoleBearSkin.setTextureToDraw();//sets new texture to draw
 		 //move objects position
 	   model[3] = glm::vec4(0,0,0,1);
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
 	   swoleBear.draw(false);//draws with new texture
 
-	   glBindTexture(GL_TEXTURE_2D, texture2);//sets new texture to draw
+	   dollSkin.setTextureToDraw();//sets new texture to draw
 	   model[3] = glm::vec4(0, 0, 8, 1);
 	   //move objects position
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
@@ -268,8 +235,8 @@ int main()
 	theMesh.~mesh();
 	swoleBear.~OBJMesh();
 	doll.~OBJMesh();
-	glDeleteTextures(1, &texture);
-	glDeleteTextures(1, &texture2);
+	swoleBearSkin.deleteTexture();
+	dollSkin.deleteTexture();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
