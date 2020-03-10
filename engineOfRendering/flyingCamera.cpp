@@ -2,6 +2,7 @@
 
 void flyingCamera::setSpeed(float newSpeed)
 {
+	//changes the speed the camera flys at
 	this->speed = newSpeed;
 }
 
@@ -25,8 +26,8 @@ void flyingCamera::update(float deltaTime)
 		displacement.y += glfwGetKey(glfw_window, GLFW_KEY_Q);
 		//UP
 		displacement.y -= glfwGetKey(glfw_window, GLFW_KEY_E);
+
 		//moves the camera in the direction the camera is facing
-		
 		glm::vec4 moveDirection =  displacement.x * worldTransform[0] + displacement.y * worldTransform[1] - displacement.z * worldTransform[2];
 		glm::normalize(moveDirection);
 
@@ -73,5 +74,6 @@ void flyingCamera::update(float deltaTime)
 
 glm::vec3 flyingCamera::getPosition()
 {
+	//returns the current position of the camera
 	return glm::vec3(getWorldTransform()[3]);
 }

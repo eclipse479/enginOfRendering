@@ -23,7 +23,7 @@ void shaders::createVertexShader(std::string shaderPath)
 	glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		printErrorLog("Vertex");
+		printErrorLog("Vertex");//if fails call error print function
 	}
 }
 
@@ -50,7 +50,7 @@ void shaders::createFragmentShader(std::string shaderPath)
 	glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		printErrorLog("Fragment");
+		printErrorLog("Fragment");//if fails call error print function
 	}
 }
 
@@ -68,7 +68,7 @@ void shaders::linkShaderProgram()
 	glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		printErrorLog("Linking");
+		printErrorLog("Linking"); //if fails call error print function
 	}
 }
 

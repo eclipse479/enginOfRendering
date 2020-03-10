@@ -8,6 +8,7 @@ unsigned int texture::getTexture()
 
 void texture::bind(const char *pathing)
 {
+	// width of image, height of image, number of colour channels(RGBA) in image
 	int width, height, n;
 	//finds the image
 	unsigned char* data = stbi_load(pathing, &width, &height, &n, 0);
@@ -21,16 +22,16 @@ void texture::bind(const char *pathing)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 	//clears up memory
-
 	stbi_image_free(data);
 }
 
 void texture::deleteTexture()
 {
+	//removes the texture
 	glDeleteTextures(1, &theTexture);
 }
 
 void texture::setTextureToDraw()
 {
-	glBindTexture(GL_TEXTURE_2D, theTexture);//sets new texture to draw
+	glBindTexture(GL_TEXTURE_2D, theTexture);//binds the next texture to draw
 }

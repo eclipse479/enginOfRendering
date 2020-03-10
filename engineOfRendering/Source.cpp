@@ -31,7 +31,7 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	if(glfwInit() == false)
 	return -1;
-
+	//creates the objects that are used
 	GLFWwindow* window = glfwCreateWindow(1280, 720, "Computer Graphics", nullptr, nullptr);
 	mesh theMesh;
 	flyingCamera theFlyingCamera;
@@ -147,33 +147,46 @@ int main()
 
 	   //rotates the world
 	   model = glm::rotate(model, 0.016f, glm::vec3(0, 1, 0));
+
+	   //manual pause when the space bar is pressed
+	   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	   {
+		   std::cout << "PAUSE!";
+	   }
+
+	   //allows camera movement
+	   theFlyingCamera.update(deltaTime);
+	   glUseProgram(shaders.getShaderID());
+
+
+
 	   //changes the light direction based on the current time
 	   float time = glfwGetTime();
 	   theLight.direction = glm::normalize(glm::vec3(glm::cos(time*2), glm::sin(time*2), 0));
 	   theSun.direction = glm::normalize(glm::vec3(glm::cos(-time * 2), glm::sin(-time * 2), 0));
-	  
-	   //stationary light
-	   //auto uniformLocation = glGetUniformLocation(shaders.getShaderID(), "lightDirection");
-	   //glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(.43f,.92f,0)));
-	   //moving light
-
+	 
 	   //---------------sets the uniforms in the shader programs---------------
+	   //moving light
 	   auto uniformLocation = glGetUniformLocation(shaders.getShaderID(), "lightDirection");
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theLight.direction));
 
+	   //sets the projection veiw matrix in the shader
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "projection_view_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(theFlyingCamera.getProjectionView()));
 
+	   //sets the normal matric in the shader
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "normalMatrix");
 	   glUniformMatrix3fv(uniformLocation, 1, false, glm::value_ptr(glm::inverseTranspose(glm::mat3(model))));
 
+	   //sets the light settings for the first light in the shader (red)
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "ambientLight");
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(ambientLight));
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "diffuseLight");
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theLight.diffuse));
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "specularLight");
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theLight.specular));
-	   //material colours 
+
+	   //material colours that the shader uses for the object
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "Ka");//material ambience
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.4f)));
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "Kd");//material diffuse
@@ -181,10 +194,7 @@ int main()
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "Ks");//material specular
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(glm::vec3(0.4f)));
 
-	   glm::vec3 position = theFlyingCamera.getPosition();
-	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "cameraPosition");
-	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theFlyingCamera.getPosition()));
-
+	   //the light statistics for the second light (blue)
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "lightDirectionSun");
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theSun.direction));
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "ambientLightSun");
@@ -194,24 +204,19 @@ int main()
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "specularLightSun");
 	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theSun.specular));
 
+	   //the position of the camera is sent to the shader to calculate specular light 
+	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "cameraPosition");
+	   glUniform3fv(uniformLocation, 1, glm::value_ptr(theFlyingCamera.getPosition()));
+
+	   //sends the model matrix to the shader
 	   uniformLocation = glGetUniformLocation(shaders.getShaderID(), "model_matrix");
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
+	   
 
-
-	   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-	   {
-		   std::cout << "PAUSE!";
-	   }
-
-
-	   theFlyingCamera.update(deltaTime);
-	   glUseProgram(shaders.getShaderID());
-
-	   //rotates the object
 
 	   //glBindTexture(GL_TEXTURE_2D, texture2); // sets the texture to draw
 	   swoleBearSkin.setTextureToDraw();//sets new texture to draw
-		 //move objects position
+	   //move objects position
 	   model[3] = glm::vec4(0,0,0,1);
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
 	   swoleBear.draw(false);//draws with new texture
@@ -220,8 +225,10 @@ int main()
 	   model[3] = glm::vec4(0, 0, 8, 1);
 	   //move objects position
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
-	   theMesh.drawCube(indexNumber);// draws with texture set above
 	   doll.draw(false);//draws with new texture
+	   model[3] = glm::vec4(0, -3, 0, 1);
+	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
+	   theMesh.drawCube(indexNumber);// draws with texture set above
 	   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	   glPolygonMode(GL_BACK, GL_LINE);
 	   
@@ -232,6 +239,7 @@ int main()
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
+	//clearing space/deleting everything
 	theMesh.~mesh();
 	swoleBear.~OBJMesh();
 	doll.~OBJMesh();

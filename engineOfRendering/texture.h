@@ -7,6 +7,7 @@
 class texture
 {
 public:
+
 	unsigned int getTexture();
 	void bind(const char* pathing);
 	void deleteTexture();
@@ -14,10 +15,12 @@ public:
 
 
 private:
+	//size of the texture
 	float width;
 	float height;
 	float n;
 
+	//holds the texture
 	unsigned char* data;
 	unsigned int theTexture;
 };

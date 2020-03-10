@@ -144,7 +144,6 @@
     <ClCompile Include="..\Dependencies\glcore\gl_core_4_5.c" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="flyingCamera.cpp" />
-    <ClCompile Include="lightSource.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="shaders.cpp" />
@@ -154,7 +153,6 @@
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="flyingCamera.h" />
-    <ClInclude Include="lightSource.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="shaders.h" />
