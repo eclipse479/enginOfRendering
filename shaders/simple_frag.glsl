@@ -1,8 +1,9 @@
 #version 450 // Frag Shader
 
 uniform sampler2D textureDiffuse; 				//FOR TEXTURE
-uniform sampler2D textureSpecular;				//FOR TEXTURE
 uniform sampler2D textureNormal;				//FOR TEXTURE
+uniform sampler2D textureSpecular;				//FOR TEXTURE
+
 
 uniform vec3 lightDirection; 					//FOR LIGHTING
 uniform vec3 ambientLight; 						//FOR LIGHTING
@@ -69,5 +70,7 @@ void main()
 	vec3 sunSpecular = specularLightSun * Ks * specularTermSun; 								// FOR SECOND LIGHT
 	
 	
-	final_color = vec4((ambient + diffuse + specular) + (sunAmbient + sunDiffuse + sunSpecular), 1.0); 				// FOR LIGHTING
+	final_color = vec4((ambient + diffuse + specular) + (sunAmbient + sunDiffuse + sunSpecular), 1.0); 
+	// FOR LIGHTING
+	//final_color = vec4(texNormal.xyz, 1);
 }

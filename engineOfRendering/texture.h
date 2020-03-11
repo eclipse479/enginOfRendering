@@ -11,7 +11,8 @@ public:
 	unsigned int getTexture();
 	void bind(const char* pathing);
 	void deleteTexture();
-	void setTextureToDraw();
+	void setDiffuseToDraw();
+	void setNormalToDraw();
 
 
 private:

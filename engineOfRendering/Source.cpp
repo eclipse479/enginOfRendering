@@ -37,12 +37,14 @@ int main()
 	flyingCamera theFlyingCamera;
 	shaders shaders;
 	aie::OBJMesh swoleBear;
-	aie::OBJMesh doll ;
+	aie::OBJMesh swordShield ;
 	light theLight;
 	light theSun;
 
-	texture swoleBearSkin;
-	texture dollSkin;
+	texture swoleBearDiffuse;
+	texture shieldDiffuse;
+	texture shieldNormal;
+
 	
 	if (window == nullptr)
 	{
@@ -80,29 +82,21 @@ int main()
 	std::vector<int> indexBuffer{
 		2, 3, 6,
 		3, 7, 6
-		/*4, 6, 5,
-		5, 6, 7,
-		0, 2, 4,
-		4, 2, 6,
-		1, 5, 3,
-		5, 7, 3,
-		0, 4, 1,
-		4, 5, 1,
-		2, 3, 6,
-		3, 7, 6,*/
 	};
 	
 	///create and load MESH
-	swoleBear.load("..\\models\\swoleBear.obj");
-	doll.load("..\\models\\betterDoll.obj");
+	//swoleBear.load("..\\models\\swoleBear.obj");
+	swordShield.load("..\\models\\meshSwordShield.obj");
 	
 	/*----------------------send info to the GPU-------------------*/
 	//loads the square
 	theMesh.meshSetUp(corners,indexBuffer);
 
     //binds the textures
-	swoleBearSkin.bind("..\\images\\yellowBear.png");
-	dollSkin.bind("..\\images\\dollSkin.png");
+	swoleBearDiffuse.bind("..\\images\\yellowBear.png");
+	stbi_set_flip_vertically_on_load(true);
+	shieldDiffuse.bind("..\\images\\shieldTexture.png");
+	shieldNormal.bind("..\\images\\shieldNormal.png");
 	
 	//constructs the shaders
 	shaders.createVertexShader("..\\shaders\\simple_vertex.glsl");
@@ -146,19 +140,11 @@ int main()
 		//----------------------------------------
 
 	   //rotates the world
-	   model = glm::rotate(model, 0.016f, glm::vec3(0, 1, 0));
-
-	   //manual pause when the space bar is pressed
-	   if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-	   {
-		   std::cout << "PAUSE!";
-	   }
+	  // model = glm::rotate(model, 0.016f, glm::vec3(0, 1, 0));
 
 	   //allows camera movement
 	   theFlyingCamera.update(deltaTime);
 	   glUseProgram(shaders.getShaderID());
-
-
 
 	   //changes the light direction based on the current time
 	   float time = glfwGetTime();
@@ -215,21 +201,22 @@ int main()
 
 
 	   //glBindTexture(GL_TEXTURE_2D, texture2); // sets the texture to draw
-	   swoleBearSkin.setTextureToDraw();//sets new texture to draw
+	   swoleBearDiffuse.setDiffuseToDraw();//sets new texture to draw
 	   //move objects position
 	   model[3] = glm::vec4(0,0,0,1);
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
-	   swoleBear.draw(false);//draws with new texture
+	   //swoleBear.draw(false);//draws with new texture
 
-	   dollSkin.setTextureToDraw();//sets new texture to draw
+	   shieldDiffuse.setDiffuseToDraw();//sets new texture to draw
+	   shieldNormal.setDiffuseToDraw();//sets new texture to draw
 	   model[3] = glm::vec4(0, 0, 8, 1);
 	   //move objects position
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
-	   doll.draw(false);//draws with new texture
+	   //swordShield.draw(false);//draws with new texture
+	   aie::OBJMesh::draw(swordShield.getChunks()[0]);
 	   model[3] = glm::vec4(0, -3, 0, 1);
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
 	   theMesh.drawCube(indexNumber);// draws with texture set above
-	   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	   glPolygonMode(GL_BACK, GL_LINE);
 	   
 	   
@@ -241,10 +228,10 @@ int main()
 	//------------------------------------------------------------------------------------------------------------------------
 	//clearing space/deleting everything
 	theMesh.~mesh();
-	swoleBear.~OBJMesh();
-	doll.~OBJMesh();
-	swoleBearSkin.deleteTexture();
-	dollSkin.deleteTexture();
+	//swoleBear.~OBJMesh();
+	swordShield.~OBJMesh();
+	swoleBearDiffuse.deleteTexture();
+	shieldDiffuse.deleteTexture();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
