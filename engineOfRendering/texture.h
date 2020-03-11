@@ -7,12 +7,14 @@
 class texture
 {
 public:
-
+	
 	unsigned int getTexture();
 	void bind(const char* pathing);
 	void deleteTexture();
-	void setDiffuseToDraw();
-	void setNormalToDraw();
+	//set another texture as a normal map (used to combine teh diffuse and normal maps)
+	void setNormalMap(unsigned int normalMap);
+	//sets the texture that the engine will draw next
+	void setTextureToDraw();
 
 
 private:
@@ -23,6 +25,7 @@ private:
 
 	//holds the texture
 	unsigned char* data;
-	unsigned int theTexture;
+	unsigned int theDiffuseMap;
+	unsigned int theNormalMap;
 };
 

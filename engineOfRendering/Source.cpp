@@ -37,13 +37,15 @@ int main()
 	flyingCamera theFlyingCamera;
 	shaders shaders;
 	aie::OBJMesh swoleBear;
-	aie::OBJMesh swordShield ;
+	aie::OBJMesh swordShield;
 	light theLight;
 	light theSun;
 
 	texture swoleBearDiffuse;
 	texture shieldDiffuse;
 	texture shieldNormal;
+	texture swordDiffuse;
+	texture swordNormal;
 
 	
 	if (window == nullptr)
@@ -97,7 +99,8 @@ int main()
 	stbi_set_flip_vertically_on_load(true);
 	shieldDiffuse.bind("..\\images\\shieldTexture.png");
 	shieldNormal.bind("..\\images\\shieldNormal.png");
-	
+	swordDiffuse.bind("..\\images\\swordDiffuse.png");
+	swordNormal.bind("..\\images\\swordNormal.png");
 	//constructs the shaders
 	shaders.createVertexShader("..\\shaders\\simple_vertex.glsl");
 
@@ -105,12 +108,13 @@ int main()
 	//link the two shaders together
 	shaders.linkShaderProgram();
 
-
+	shieldDiffuse.setNormalMap(shieldNormal.getTexture());
+	swordDiffuse.setNormalMap(swordNormal.getTexture());
 	//set the model matrix
 	glm::mat4 model = glm::mat4(1.0f);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	///----------GAME LOOP----------///
+	
 	float currentFrame = 0;
 	float lastFrame = 0;
 	float deltaTime = 0;
@@ -130,6 +134,7 @@ int main()
 	theSun.specular = glm::vec3(0, 0, 1);
 	//global ambient light(no direct lighting)
 	glm::vec3 ambientLight = {0.5f,0.5f,0.5f};
+	///----------GAME LOOP----------///
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -201,19 +206,20 @@ int main()
 
 
 	   //glBindTexture(GL_TEXTURE_2D, texture2); // sets the texture to draw
-	   swoleBearDiffuse.setDiffuseToDraw();//sets new texture to draw
 	   //move objects position
 	   model[3] = glm::vec4(0,0,0,1);
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
-	   swoleBear.draw(false);//draws with new texture
+	  // swoleBear.draw(false);//draws with new texture
 
-	   shieldDiffuse.setDiffuseToDraw();//sets new texture to draw
-	   shieldNormal.setDiffuseToDraw();//sets new texture to draw
+	   shieldDiffuse.setTextureToDraw();//sets new texture to draw
 	   model[3] = glm::vec4(0, 0, 8, 1);
 	   //move objects position
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
 	   //swordShield.draw(false);//draws with new texture
 	   aie::OBJMesh::draw(swordShield.getChunks()[0]);
+	   //draw sword
+	   swordDiffuse.setTextureToDraw();
+	   aie::OBJMesh::draw(swordShield.getChunks()[1]);
 	   model[3] = glm::vec4(0, -3, 0, 1);
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
 	   theMesh.drawCube(indexNumber);// draws with texture set above

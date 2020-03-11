@@ -70,7 +70,6 @@ void main()
 	vec3 sunSpecular = specularLightSun * Ks * specularTermSun; 								// FOR SECOND LIGHT
 	
 	
-	final_color = vec4((ambient + diffuse + specular) + (sunAmbient + sunDiffuse + sunSpecular), 1.0); 
-	// FOR LIGHTING
+	final_color = vec4((ambient + diffuse + specular) + (sunAmbient + sunDiffuse + sunSpecular), 1.0); // FOR LIGHTING
 	//final_color = vec4(texNormal.xyz, 1);
 }
