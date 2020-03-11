@@ -85,7 +85,7 @@ int main()
 	};
 	
 	///create and load MESH
-	//swoleBear.load("..\\models\\swoleBear.obj");
+	swoleBear.load("..\\models\\swoleBear.obj");
 	swordShield.load("..\\models\\meshSwordShield.obj");
 	
 	/*----------------------send info to the GPU-------------------*/
@@ -205,7 +205,7 @@ int main()
 	   //move objects position
 	   model[3] = glm::vec4(0,0,0,1);
 	   glUniformMatrix4fv(uniformLocation, 1, false, glm::value_ptr(model));
-	   //swoleBear.draw(false);//draws with new texture
+	   swoleBear.draw(false);//draws with new texture
 
 	   shieldDiffuse.setDiffuseToDraw();//sets new texture to draw
 	   shieldNormal.setDiffuseToDraw();//sets new texture to draw
