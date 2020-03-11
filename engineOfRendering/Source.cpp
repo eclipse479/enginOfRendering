@@ -152,7 +152,7 @@ int main()
 	   glUseProgram(shaders.getShaderID());
 
 	   //changes the light direction based on the current time
-	   float time = glfwGetTime();
+	   float time = (float)glfwGetTime();
 	   theLight.direction = glm::normalize(glm::vec3(glm::cos(time*2), glm::sin(time*2), 0));
 	   theSun.direction = glm::normalize(glm::vec3(glm::cos(-time * 2), glm::sin(-time * 2), 0));
 	 
